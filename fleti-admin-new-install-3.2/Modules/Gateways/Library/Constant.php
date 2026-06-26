@@ -15,6 +15,7 @@ const PAYMENT_METHODS = [
     ['key' => 'liqpay', 'value' => 'Liq Pay'],
     ['key' => 'mercadopago', 'value' => 'Mercadopago'],
     ['key' => 'mercadopago_pix', 'value' => 'PIX Mercado Pago'],
+    ['key' => 'efi_pix', 'value' => 'PIX EFI'],
     ['key' => 'bkash', 'value' => 'Bkash'],
     ['key' => 'fatoorah', 'value' => 'Fatoorah'],
     ['key' => 'xendit', 'value' => 'Xendit'],

@@ -84,7 +84,7 @@
                                             @endif
                                         </div>
 
-                                        @php($skip = ['gateway', 'mode', 'status', 'supported_country','gateway_title'])
+                                        @php($skip = ['gateway', 'mode', 'status', 'supported_country','gateway_title', 'certificate_file'])
                                         @foreach ($dataValues->where('key_name', $gateway->key_name)->first()->live_values as $key => $value)
                                             @if (!in_array($key, $skip))
                                                 <div class="  mb-30 mt-30">
@@ -98,6 +98,18 @@
                                                 </div>
                                             @endif
                                         @endforeach
+                                        @if($gateway->key_name === 'efi_pix')
+                                            @php($liveConfig = $dataValues->where('key_name', $gateway->key_name)->first()->live_values)
+                                            <div class="mb-30 mt-30">
+                                                <label class="form-label">Certificate (.p12) *</label>
+                                                <input type="file" class="form-control" name="efi_certificate" accept=".p12">
+                                                @if(!empty($liveConfig['certificate_file']))
+                                                    <small class="text-muted d-block mt-2">
+                                                        Arquivo atual: {{ $liveConfig['certificate_file'] }}
+                                                    </small>
+                                                @endif
+                                            </div>
+                                        @endif
                                         @php($additionalData = $gateway['additional_data'] != null ? json_decode($gateway['additional_data']) : null)
                                         <div class="  mb-30 mt-30">
                                             <label for="exampleFormControlInput1" class="form-label">Gateway

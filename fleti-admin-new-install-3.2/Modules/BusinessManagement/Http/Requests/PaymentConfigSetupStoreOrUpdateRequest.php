@@ -47,14 +47,14 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
         }
 
         return [
-            'gateway' => 'required|in:ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,cash_after_service,digital_payment,momo',
+            'gateway' => 'required|in:ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,efi_pix,cash_after_service,digital_payment,momo',
             'mode' => 'required|in:live,test',
             'gateway_image' => 'nullable|mimes:png|max:' . convertBytesToKiloBytes(maxUploadSize('image')),
             'gateway_title' => Rule::requiredIf(function () {
                 return $this->input('status') == 1;
             }),
             'status' => [
-                'required_if:gateway,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,cash_after_service,digital_payment,momo',
+                'required_if:gateway,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,efi_pix,cash_after_service,digital_payment,momo',
                 Rule::in([1, 0])
             ],
             #SSl_Commerz
@@ -68,15 +68,15 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
                     return ($this->input('status') == 1 && $this->input('gateway') == 'ssl_commerz');
                 })
             ],
-            #Paypal
+            #Paypal / EFI PIX
             'client_id' => [
                 Rule::requiredIf(function () {
-                    return ($this->input('status') == 1 && $this->input('gateway') == 'paypal');
+                    return ($this->input('status') == 1 && in_array($this->input('gateway'), ['paypal', 'efi_pix'], true));
                 })
             ],
             'client_secret' => [
                 Rule::requiredIf(function () {
-                    return ($this->input('status') == 1 && $this->input('gateway') == 'paypal');
+                    return ($this->input('status') == 1 && in_array($this->input('gateway'), ['paypal', 'efi_pix'], true));
                 })
             ],
             #stripe,razor_pay
@@ -167,6 +167,22 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
                 Rule::requiredIf(function () {
                     return ($this->input('status') == 1 && in_array($this->input('gateway'), ['mercadopago', 'mercadopago_pix'], true));
                 })
+            ],
+            #efi_pix
+            'certificate_password' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'efi_pix');
+                })
+            ],
+            'pix_key' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'efi_pix');
+                })
+            ],
+            'efi_certificate' => [
+                'nullable',
+                'file',
+                'mimes:p12',
             ],
             #liqpay
             'private_key' => [

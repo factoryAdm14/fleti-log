@@ -131,6 +131,7 @@
   "paymob": "Paymob",
   "mercadopago": "Mercadopago",
   "mercadopago_pix": "PIX Mercado Pago",
+  "efi_pix": "PIX EFI",
   "stripe": "Stripe",
   "flutterwave": "Flutterwave",
   "paytm": "Paytm",

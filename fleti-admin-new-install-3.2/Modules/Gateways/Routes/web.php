@@ -19,6 +19,7 @@ use Modules\Gateways\Http\Controllers\FlutterwaveV3Controller;
 use Modules\Gateways\Http\Controllers\LiqPayController;
 use Modules\Gateways\Http\Controllers\MercadoPagoController;
 use Modules\Gateways\Http\Controllers\MercadoPagoPixController;
+use Modules\Gateways\Http\Controllers\EfiPixController;
 use Modules\Gateways\Http\Controllers\PaymobController;
 use Modules\Gateways\Http\Controllers\PaypalPaymentController;
 use Modules\Gateways\Http\Controllers\PaystackController;
@@ -123,6 +124,14 @@ Route::group(['prefix' => 'payment'], function () {
         Route::get('pay', [MercadoPagoPixController::class, 'index'])->name('pay');
         Route::get('status', [MercadoPagoPixController::class, 'status'])->name('status');
         Route::post('webhook', [MercadoPagoPixController::class, 'webhook'])->name('webhook')
+            ->withoutMiddleware([VerifyCsrfToken::class]);
+    });
+
+    //EFI PIX
+    Route::group(['prefix' => 'efi-pix', 'as' => 'efi_pix.'], function () {
+        Route::get('pay', [EfiPixController::class, 'index'])->name('pay');
+        Route::get('status', [EfiPixController::class, 'status'])->name('status');
+        Route::post('webhook', [EfiPixController::class, 'webhook'])->name('webhook')
             ->withoutMiddleware([VerifyCsrfToken::class]);
     });
 

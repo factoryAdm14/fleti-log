@@ -35,6 +35,24 @@ class SettingService extends BaseService implements Interfaces\SettingServiceInt
             $gatewayImage = $additionalDataImage != null ? $additionalDataImage->gateway_image : '';
         }
 
+        if ($data['gateway'] === 'efi_pix' && request()->hasFile('efi_certificate')) {
+            $dir = 'private/payment_modules/efi_pix/';
+            $oldCert = $paymentSetting['live_values']['certificate_file'] ?? null;
+            if ($oldCert && \Illuminate\Support\Facades\Storage::disk('local')->exists($dir . $oldCert)) {
+                \Illuminate\Support\Facades\Storage::disk('local')->delete($dir . $oldCert);
+            }
+            $certName = 'efi_' . \Carbon\Carbon::now()->format('Ymd') . '_' . uniqid() . '.p12';
+            request()->file('efi_certificate')->storeAs($dir, $certName, 'local');
+            $data['certificate_file'] = $certName;
+        } elseif ($paymentSetting && $data['gateway'] === 'efi_pix') {
+            $existingValues = $paymentSetting->live_values;
+            if (is_string($existingValues)) {
+                $existingValues = json_decode($existingValues, true) ?: [];
+            }
+            $data['certificate_file'] = $existingValues['certificate_file'] ?? null;
+        }
+        unset($data['efi_certificate']);
+
         $paymentAdditionalData = [
             'gateway_title' => $data['gateway_title'],
             'gateway_image' => $gatewayImage,
