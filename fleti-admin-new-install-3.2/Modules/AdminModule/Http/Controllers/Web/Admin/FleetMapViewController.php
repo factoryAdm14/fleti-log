@@ -111,7 +111,11 @@ class FleetMapViewController extends BaseController
         ];
         $driver = $this->driverService->findOneBy(criteria: ['user_type' => DRIVER, 'id' => $id], relations: $driverRelations);
         $trip = $driver?->driverTrips()?->whereIn('current_status', [ACCEPTED, OUT_FOR_PICKUP, ONGOING])->where('type', RIDE_REQUEST)->first();
-        $otherTrips = $driver?->driverTrips()->where('type', RIDE_REQUEST)->where('id', '!=', $trip?->id)->get();
+        $otherTrips = $driver?->driverTrips()
+            ->where('type', RIDE_REQUEST)
+            ->where('id', '!=', $trip?->id)
+            ->with('driverSafetyAlertPending')
+            ->get();
         $otherTrips = $otherTrips->filter(function ($trip) {
             return $trip?->driverSafetyAlertPending;
         });

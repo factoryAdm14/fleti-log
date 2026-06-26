@@ -34,6 +34,8 @@ class TripRequestResource extends JsonResource
     public function toArray($request)
     {
         $fee = [];
+        $realtimeLocationSharing = (int)(businessConfig('enable_real_time_location_sharing', TRIP_SETTINGS)?->value ?? 0);
+
         $trip_request = [
             'id' => $this->id,
             'ref_id' => $this->ref_id,
@@ -56,7 +58,7 @@ class TripRequestResource extends JsonResource
             'payment_status' => $this->payment_status,
             'payment_method' => $this->payment_method,
             'coupon_amount' => round((double)$this->coupon_amount, 2),
-            'discount' => $this->discount_id === null ? null : DiscountResource::make($this->discount),
+            'discount' => $this->discount_id === null ? null : DiscountResource::make($this->whenLoaded('discount')),
             'discount_amount' => $this->discount_amount === null ? null : round((double)$this->discount_amount, 2),
             'note' => $this->note,
             'pickup_note' => $this->pickup_note ?? null,
@@ -77,7 +79,7 @@ class TripRequestResource extends JsonResource
             'fare_biddings' => FareBiddingResource::collection($this->whenLoaded('fare_biddings')),
             'parcel_information' => InformationResource::make($this->whenLoaded('parcel')),
             'parcel_user_info' => UserResource::collection($this->whenLoaded('parcelUserInfo')),
-            'coupon' => $this->coupon_id === null ? null : CouponResource::make($this->coupon),
+            'coupon' => $this->coupon_id === null ? null : CouponResource::make($this->whenLoaded('coupon')),
             'tripStatus' => TripStatusResource::make($this->whenLoaded('tripStatus')),
             'screenshot' => $this->map_screenshot,
             'parcel_start_time' => $this->type === PARCEL ? $this->tripStatus?->ongoing : null,
@@ -85,13 +87,13 @@ class TripRequestResource extends JsonResource
             'parcel_complete_time' => $this->type ===PARCEL ? $this->tripStatus?->completed : null,
             'ride_complete_time' => $this->type === RIDE_REQUEST && !is_null($this->tripStatus?->completed) ? $this->tripStatus?->completed : ($this->type === RIDE_REQUEST && !is_null($this->tripStatus?->cancelled) ? $this->tripStatus?->cancelled : null),
             'parcel_refund' => ParcelRefundResource::make($this->whenLoaded('parcelRefund')),
-            'pickup_proof_images' => $this->type === PARCEL ? ($this->proofImage?->pickup_proof_images ?? []) : null,
-            'delivery_proof_images' => $this->type === PARCEL ? ($this->proofImage?->delivery_proof_images ?? []) : null,
-            'driver_safety_alert' => SafetyAlertResource::make($this->driverSafetyAlert),
-            'customer_safety_alert' => SafetyAlertResource::make($this->customerSafetyAlert),
+            'pickup_proof_images' => $this->type === PARCEL ? ($this->relationLoaded('proofImage') ? ($this->proofImage?->pickup_proof_images ?? []) : []) : null,
+            'delivery_proof_images' => $this->type === PARCEL ? ($this->relationLoaded('proofImage') ? ($this->proofImage?->delivery_proof_images ?? []) : []) : null,
+            'driver_safety_alert' => SafetyAlertResource::make($this->whenLoaded('driverSafetyAlert')),
+            'customer_safety_alert' => SafetyAlertResource::make($this->whenLoaded('customerSafetyAlert')),
             'cancellation_reason' => $this->trip_cancellation_reason,
-            'customer_location_url' => (businessConfig('enable_real_time_location_sharing', TRIP_SETTINGS)?->value ?? 0) && $this->tripNavigation ? route('locate-user', [$this->customer_id, $this->tripNavigation->id]) : null,
-            'driver_location_url' => (businessConfig('enable_real_time_location_sharing', TRIP_SETTINGS)?->value ?? 0) && $this->tripNavigation ? route('locate-driver', [$this->driver_id, $this->tripNavigation->id]) : null,
+            'customer_location_url' => $realtimeLocationSharing && $this->relationLoaded('tripNavigation') && $this->tripNavigation ? route('locate-user', [$this->customer_id, $this->tripNavigation->id]) : null,
+            'driver_location_url' => $realtimeLocationSharing && $this->relationLoaded('tripNavigation') && $this->tripNavigation ? route('locate-driver', [$this->driver_id, $this->tripNavigation->id]) : null,
         ];
 
         $coordinate = [];
@@ -113,7 +115,7 @@ class TripRequestResource extends JsonResource
             ];
         }
 
-        if ($this->fee()->exists()) {
+        if ($this->relationLoaded('fee') && $this->fee) {
             $fee = [
                 'waiting_fee' => round((double)$this->fee->waiting_fee, 2),
                 'waited_by' => $this->fee->waited_by,
@@ -135,7 +137,7 @@ class TripRequestResource extends JsonResource
         }
 
         $time = [];
-        if ($this->time()->exists()) {
+        if ($this->relationLoaded('time') && $this->time) {
             $time = [
                 'waiting_time' => round((double)$this->time->waiting_time, 2),
                 'delay_time' => round((double)$this->time->delay_time, 2),

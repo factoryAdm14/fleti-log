@@ -18,8 +18,10 @@ class ZoneController extends Controller
     public function list(Request $request): JsonResponse
     {
         $criteria['is_active'] =  1;
-        $zones = $this->zoneService->getBy(criteria: $criteria, orderBy: ['created_at' => 'desc'], limit: $request['limit'], offset: $request['offset']);
+        $limit = min(max((int)($request->input('limit', DEFAULT_PAGINATION)), 1), 100);
+        $offset = max((int)($request->input('offset', 1)), 1);
+        $zones = $this->zoneService->getBy(criteria: $criteria, orderBy: ['created_at' => 'desc'], limit: $limit, offset: $offset);
         $zoneList = ZoneResource::collection($zones);
-        return response()->json(responseFormatter(constant: DEFAULT_200, content: $zoneList, limit: $request['limit'], offset: $request['offset']), 200);
+        return response()->json(responseFormatter(constant: DEFAULT_200, content: $zoneList, limit: $limit, offset: $offset), 200);
     }
 }

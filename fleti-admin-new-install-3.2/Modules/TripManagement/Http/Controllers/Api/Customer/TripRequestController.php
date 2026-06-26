@@ -367,7 +367,7 @@ class TripRequestController extends Controller
         if (!is_null($request->status) && $request->status != ALL) {
             $criteria['current_status'] = [$request->status];
         }
-        $relations = ['driver', 'vehicle.model', 'vehicleCategory', 'time', 'coordinate', 'fee', 'parcel.parcelCategory', 'parcelRefund'];
+        $relations = ['driver', 'vehicle.model', 'vehicleCategory', 'time', 'coordinate', 'fee', 'parcel.parcelCategory', 'parcelRefund', 'discount', 'coupon', 'driverSafetyAlert', 'customerSafetyAlert', 'proofImage', 'tripNavigation'];
         $data = $this->tripRequestService->getWithAvg(
             criteria: $criteria,
             relations: $relations,

@@ -1585,7 +1585,7 @@ class TripRequestService extends BaseService implements TripRequestServiceInterf
             $criteria = array_merge($criteria, [['ride_request_type', '!=', SCHEDULED]]);
         }
 
-        $relations = ['customer', 'vehicle.model', 'vehicleCategory', 'time', 'coordinate', 'fee', 'parcel.parcelCategory', 'parcelRefund'];
+        $relations = ['customer', 'vehicle.model', 'vehicleCategory', 'time', 'coordinate', 'fee', 'parcel.parcelCategory', 'parcelRefund', 'discount', 'coupon', 'driverSafetyAlert', 'customerSafetyAlert', 'proofImage', 'tripNavigation'];
         $withAvgRelations = [
             ['relation' => 'driverReceivedReviews', 'column' => 'rating'],
         ];
