@@ -34,8 +34,37 @@ class ConfigurationController extends Controller
 
     public function updateConfiguration(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'mart_base_url' => 'required|url',
+            'mart_token' => 'required|string|min:8',
+            'drivemond_token' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Invalid request'], 422);
+        }
+
+        if (!$this->isAuthorizedExternalConfigurationRequest($request)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $this->externalConfigurationService->updateExternalConfiguration(data: $request->all());
         return response()->json(['message' => 'Configuration updated successfully.']);
+    }
+
+    private function isAuthorizedExternalConfigurationRequest(Request $request): bool
+    {
+        if ((int)(externalConfig('activation_mode')?->value ?? 0) !== 1) {
+            return false;
+        }
+
+        $martBaseUrl = externalConfig('mart_base_url')?->value;
+        $martToken = externalConfig('mart_token')?->value;
+        $systemSelfToken = externalConfig('system_self_token')?->value;
+
+        return $request->mart_base_url === $martBaseUrl
+            && $request->mart_token === $martToken
+            && $request->drivemond_token === $systemSelfToken;
     }
 
     public function getExternalConfiguration(Request $request)

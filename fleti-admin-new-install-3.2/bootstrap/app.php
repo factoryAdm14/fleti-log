@@ -54,7 +54,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->group('api', [
 //           EnsureFrontendRequestsAreStateful::class,
-            'throttle:1000,1',
+            'throttle:api',
             SubstituteBindings::class,
             LocalizationMiddleware::class
         ]);

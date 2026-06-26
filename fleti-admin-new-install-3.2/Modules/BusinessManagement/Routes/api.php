@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(\Modules\BusinessManagement\Http\Controllers\Api\ConfigurationController::class)->group(function () {
     Route::get('/configurations', 'getConfiguration');
     Route::get('/get-external-configurations', 'getExternalConfiguration');
-    Route::post('/store-configurations', 'updateConfiguration');
+    Route::post('/store-configurations', 'updateConfiguration')->middleware('throttle:20,1');
 });
 
 Route::group(['prefix' => 'location', 'middleware' => ['auth:api', 'maintenance_mode']], function () {
