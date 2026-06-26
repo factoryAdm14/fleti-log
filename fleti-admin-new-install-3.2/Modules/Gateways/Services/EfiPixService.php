@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Modules\Gateways\Entities\EfiPixLog;
 use Modules\Gateways\Entities\PaymentRequest;
 use Modules\Gateways\Traits\Processor;
+use App\Lib\FletiObservability;
 
 class EfiPixService
 {
@@ -328,5 +329,20 @@ class EfiPixService
             'event' => $event,
             'payload' => $payload,
         ]);
+
+        $level = in_array($event, ['webhook_orphan', 'create_cob'], true) && ($payload['http_status'] ?? 200) >= 400
+            ? 'warning'
+            : 'info';
+        FletiObservability::pix($event, array_merge([
+            'payment_request_id' => $paymentRequestId,
+            'gateway' => 'efi_pix',
+        ], $payload), $level);
+
+        if (str_contains($event, 'webhook')) {
+            FletiObservability::webhook('efi_pix_' . $event, [
+                'payment_request_id' => $paymentRequestId,
+                'txid' => $payload['txid'] ?? null,
+            ]);
+        }
     }
 }

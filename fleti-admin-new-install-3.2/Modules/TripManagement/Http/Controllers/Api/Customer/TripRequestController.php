@@ -6,6 +6,7 @@ use App\Events\CustomerTripCancelledAfterOngoingEvent;
 use App\Events\CustomerTripCancelledEvent;
 use App\Jobs\ProcessPushNotifications;
 use App\Jobs\SendPushNotificationJob;
+use App\Lib\FletiObservability;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -233,6 +234,12 @@ class TripRequestController extends Controller
             Log::error(message: 'Trip Request Store Failed', context: [
                 'exception' => $exception->getMessage(),
             ]);
+            $tripDomain = ($request->type ?? '') === PARCEL ? FletiObservability::DOMAIN_DELIVERY : FletiObservability::DOMAIN_RIDE;
+            FletiObservability::log($tripDomain, 'create_failed', [
+                'customer_id' => auth('api')->id(),
+                'type' => $request->type ?? null,
+                'exception' => $exception->getMessage(),
+            ], 'error');
 
             return response()->json(responseFormatter(DEFAULT_FAIL_200), 403);
         }

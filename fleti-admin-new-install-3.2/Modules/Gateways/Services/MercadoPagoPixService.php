@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Modules\Gateways\Entities\MercadoPagoPixLog;
 use Modules\Gateways\Entities\PaymentRequest;
 use Modules\Gateways\Traits\Processor;
+use App\Lib\FletiObservability;
 
 class MercadoPagoPixService
 {
@@ -256,5 +257,20 @@ class MercadoPagoPixService
             'event' => $event,
             'payload' => $payload,
         ]);
+
+        $level = in_array($event, ['webhook_orphan', 'create_payment'], true) && ($payload['http_status'] ?? 200) >= 400
+            ? 'warning'
+            : 'info';
+        FletiObservability::pix($event, array_merge([
+            'payment_request_id' => $paymentRequestId,
+            'gateway' => 'mercadopago_pix',
+        ], $payload), $level);
+
+        if (str_contains($event, 'webhook')) {
+            FletiObservability::webhook('mercadopago_pix_' . $event, [
+                'payment_request_id' => $paymentRequestId,
+                'status' => $payload['status'] ?? null,
+            ]);
+        }
     }
 }

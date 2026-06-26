@@ -29,6 +29,7 @@ use Modules\UserManagement\Service\Interfaces\CustomerServiceInterface;
 use Modules\UserManagement\Service\Interfaces\DriverAccountServiceInterface;
 use Modules\UserManagement\Service\Interfaces\DriverLevelServiceInterface;
 use Modules\UserManagement\Service\Interfaces\DriverServiceInterface;
+use App\Lib\FletiObservability;
 use Modules\UserManagement\Service\Interfaces\OtpVerificationServiceInterface;
 use Modules\UserManagement\Service\Interfaces\ReferralCustomerServiceInterface;
 use Modules\UserManagement\Service\Interfaces\ReferralDriverServiceInterface;
@@ -409,6 +410,7 @@ class AuthController extends Controller
     {
         $user = $this->authService->checkClientRoute($request);
         if (!$user) {
+            FletiObservability::login('client_not_found', ['phone' => $request->phone ?? null], 'warning');
             return response()->json(responseFormatter(constant: AUTH_LOGIN_404), 403);
         }
         foreach ($user->tokens as $token) {
@@ -423,6 +425,11 @@ class AuthController extends Controller
                 $seconds_passed = Carbon::parse($user->blocked_at)->diffInSeconds();
                 if ($seconds_passed <= $block_time) {
                     $time = $block_time - $seconds_passed;
+                    FletiObservability::login('temp_blocked', [
+                        'user_id' => $user->id,
+                        'user_type' => $user->user_type,
+                        'retry_after_seconds' => $time,
+                    ], 'warning');
                     return response()->json([
                         "response_code" => "too_many_attempt_405",
                         "message" => translate('please_try_again_after_') . CarbonInterval::seconds($time)->cascade()->forHumans(),
@@ -446,6 +453,11 @@ class AuthController extends Controller
                 $user->blocked_at = now();
             }
             $user->save();
+            FletiObservability::login('invalid_credentials', [
+                'user_id' => $user->id,
+                'user_type' => $user->user_type,
+                'failed_attempt' => $user->failed_attempt,
+            ], 'warning');
             return response()->json(responseFormatter(AUTH_LOGIN_401), 403);
         }
 
@@ -466,6 +478,10 @@ class AuthController extends Controller
                     'blocked_at' => null,
                 ];
                 $user = $this->authService->update(id: $user->id, data: $userData);
+                FletiObservability::login('success', [
+                    'user_id' => $user->id,
+                    'user_type' => $user->user_type,
+                ]);
                 return response()->json(responseFormatter(AUTH_LOGIN_200, $this->authenticate($user, $access_type)));
             }
             if ($user->user_type === 'driver') {

@@ -11,6 +11,7 @@ use Modules\Gateways\Library\Payer;
 use Modules\Gateways\Library\Payment as PaymentInfo;
 use Modules\Gateways\Library\Receiver;
 use Modules\Gateways\Traits\Payment;
+use App\Lib\FletiObservability;
 use Modules\UserManagement\Service\Interfaces\UserServiceInterface;
 use Modules\UserManagement\Service\Interfaces\WalletBonusServiceInterface;
 use Modules\UserManagement\Transformers\WalletBonusResource;
@@ -57,6 +58,10 @@ class WalletController extends Controller
         ]);
 
         if ($validator->fails()) {
+            FletiObservability::wallet('add_fund_validation_failed', [
+                'user_id' => $request->user_id ?? null,
+                'errors' => $validator->errors()->keys(),
+            ], 'warning');
             return response()->json(responseFormatter(constant: DEFAULT_400, errors: errorProcessor($validator)), 400);
         }
 
@@ -64,6 +69,10 @@ class WalletController extends Controller
 
         if (empty($activePaymentGateway))
         {
+           FletiObservability::wallet('gateway_inactive', [
+               'payment_method' => $request->payment_method,
+               'user_id' => $request->user_id,
+           ], 'warning');
            return redirect()->route('gateway-inactive');
         }
 
@@ -84,6 +93,12 @@ class WalletController extends Controller
         );
         $receiverInfo = new Receiver('receiver_name', 'example.png');
         $redirectLink = $this->generate_link($payer, $paymentInfo, $receiverInfo);
+
+        FletiObservability::wallet('add_fund_link_created', [
+            'user_id' => $customer->id,
+            'amount' => $request->amount,
+            'payment_method' => $request->payment_method,
+        ]);
 
         return redirect($redirectLink);
     }

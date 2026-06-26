@@ -8,6 +8,7 @@ use Modules\Gateways\Library\Payer;
 use Modules\Gateways\Library\Payment as PaymentInfo;
 use Modules\Gateways\Library\Receiver;
 use Modules\Gateways\Traits\Payment;
+use App\Lib\FletiObservability;
 use Modules\TripManagement\Service\Interfaces\TripRequestServiceInterface;
 
 class PaymentRecordController extends Controller
@@ -29,11 +30,17 @@ class PaymentRecordController extends Controller
         ]);
         if ($validator->fails()) {
 
+            FletiObservability::paymentFailure('trip_payment_validation_failed', [
+                'trip_request_id' => $request->trip_request_id ?? null,
+            ], 'warning');
             return response()->json(errorProcessor($validator), 400);
         }
 
         $trip = $this->tripRequestService->findOne(id: $request->trip_request_id,relations: ['customer', 'driver']);
         if (!$trip) {
+            FletiObservability::paymentFailure('invalid_trip', [
+                'trip_request_id' => $request->trip_request_id,
+            ], 'warning');
             return response()->json(['message' => 'trip id not valid'], 403);
         }
         $customer = $trip->customer;
@@ -80,16 +87,19 @@ class PaymentRecordController extends Controller
 
     public function fail()
     {
+        FletiObservability::paymentFailure('callback_failed');
         return response()->json(['message' => 'Payment failed'], 403);
     }
 
     public function cancel()
     {
+        FletiObservability::paymentFailure('callback_cancelled');
         return response()->json(['message' => 'Payment canceled'], 405);
     }
 
     public function gatewayInactive()
     {
+        FletiObservability::paymentFailure('gateway_inactive');
         return response()->json(['message' => 'Gateway inactive'], 405);
     }
 

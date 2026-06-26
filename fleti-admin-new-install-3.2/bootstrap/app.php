@@ -56,7 +56,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
 //           EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             SubstituteBindings::class,
-            LocalizationMiddleware::class
+            LocalizationMiddleware::class,
+            \App\Http\Middleware\FletiApiObservabilityMiddleware::class,
         ]);
         /*
         |--------------------------------------------------------------------------
@@ -80,7 +81,15 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // You can customize exception handling here if needed
+        $exceptions->reportable(function (\Throwable $e) {
+            if (request()?->is('api/*')) {
+                \App\Lib\FletiObservability::exception(
+                    \App\Lib\FletiObservability::DOMAIN_API,
+                    'unhandled_exception',
+                    $e
+                );
+            }
+        });
     })
     ->create();
 

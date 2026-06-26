@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use App\Lib\FletiObservability;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Modules\BusinessManagement\Http\Requests\UserLocationStore;
 use Modules\BusinessManagement\Lib\AdditionalDataFieldNormalizer;
@@ -392,7 +393,16 @@ class ConfigController extends Controller
 //        $response = Http::get(MAP_API_BASE_URI . '/geocode/json?latlng=' . $request->lat . ',' . $request->lng . '&key=' . $mapApiKey . '&components=country:IN');
 
         $response = Http::get(MAP_API_BASE_URI . '/geocode/json?latlng=' . $request->lat . ',' . $request->lng . '&key=' . $mapApiKey);
-        return response()->json(responseFormatter(DEFAULT_200, $response->json()), 200);
+        $body = $response->json();
+        if (!$response->successful() || ($body['status'] ?? '') !== 'OK') {
+            FletiObservability::mapError('geocode_failed', [
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'http_status' => $response->status(),
+                'maps_status' => $body['status'] ?? null,
+            ]);
+        }
+        return response()->json(responseFormatter(DEFAULT_200, $body), 200);
     }
 
     #
@@ -435,6 +445,11 @@ class ConfigController extends Controller
         if ($zone) {
             return response()->json(responseFormatter(DEFAULT_200, $zone), 200);
         }
+
+        FletiObservability::zone('not_found', [
+            'lat' => $request->lat,
+            'lng' => $request->lng,
+        ], 'warning');
 
         return response()->json(responseFormatter(ZONE_RESOURCE_404), 403);
     }

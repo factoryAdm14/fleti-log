@@ -67,6 +67,13 @@ return [
             'days' => 14,
         ],
 
+        'fleti' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/fleti-ops.log'),
+            'level' => env('FLETI_LOG_LEVEL', env('LOG_LEVEL', 'info')),
+            'days' => (int) env('FLETI_LOG_DAYS', 30),
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
