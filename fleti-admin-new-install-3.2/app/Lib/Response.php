@@ -1073,6 +1073,16 @@ const INCOMPLETE_RIDE_403 = [
     'message' => 'Please complete previous ride first'
 ];
 
+const MULTI_STOP_DISABLED_403 = [
+    'response_code' => 'multi_stop_disabled_403',
+    'message' => 'Multi-stop delivery is not enabled'
+];
+
+const MULTI_STOP_INCOMPLETE_403 = [
+    'response_code' => 'multi_stop_incomplete_403',
+    'message' => 'All delivery stops must be completed before finishing the trip'
+];
+
 const DRIVER_UNAVAILABLE_403 = [
     'response_code' => 'driver_unavailable_403',
     'message' => 'Please change your offline status'

@@ -64,6 +64,8 @@ class ConfigModel {
   bool? maximumParcelWeightStatus;
   double? maximumParcelWeightCapacity;
   String? parcelWeightUnit;
+  bool? enableMultiStopDelivery;
+  int? multiStopMaxStops;
   bool? safetyFeatureStatus;
   int? safetyFeatureMinimumTripDelayTime;
   String? safetyFeatureMinimumTripDelayTimeType;
@@ -264,6 +266,10 @@ class ConfigModel {
     isSmsGateway = json['sms_gateway'] != null ? (bool.tryParse(json['sms_gateway'].toString()) ?? (json['sms_gateway'].toString() == '1')) : null;
     websocketScheme = json['websocket_scheme'];
     parcelWeightUnit = json['parcel_weight_unit'];
+    enableMultiStopDelivery = json['enable_multi_stop_delivery'] != null
+        ? (bool.tryParse(json['enable_multi_stop_delivery'].toString()) ?? (json['enable_multi_stop_delivery'].toString() == '1'))
+        : null;
+    multiStopMaxStops = int.tryParse(json['multi_stop_max_stops']?.toString() ?? '');
     zoneExtraFare = List<ZoneExtraFare>.from(json["zone_extra_fare"].map((x) => ZoneExtraFare.fromJson(x)));
     refundPolicy = json['refund_policy'] != null ? AboutUs.fromJson(json['refund_policy']) : null;
     maximumParcelWeightStatus = json['maximum_parcel_weight_status'] != null ? (bool.tryParse(json['maximum_parcel_weight_status'].toString()) ?? (json['maximum_parcel_weight_status'].toString() == '1')) : null;

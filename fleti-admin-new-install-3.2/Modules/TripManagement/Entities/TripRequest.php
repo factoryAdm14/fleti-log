@@ -64,6 +64,7 @@ class TripRequest extends Model
         'rise_request_count',
         'type',
         'is_parcel_delivery_proof_enabled',
+        'is_multi_stop',
         'ride_request_type',
         'is_female_driver_requested',
         'scheduled_at',
@@ -107,6 +108,7 @@ class TripRequest extends Model
         "is_notification_sent" => 'boolean',
         "is_female_driver_requested" => 'boolean',
         "is_parcel_delivery_proof_enabled" => 'boolean',
+        "is_multi_stop" => 'boolean',
     ];
 
     protected static function newFactory()
@@ -385,6 +387,11 @@ class TripRequest extends Model
     public function tripNavigation()
     {
         return $this->hasOne(TripNavigation::class, 'trip_request_id');
+    }
+
+    public function tripStops()
+    {
+        return $this->hasMany(TripStop::class, 'trip_request_id')->orderBy('stop_order');
     }
 
     public function proofImage()

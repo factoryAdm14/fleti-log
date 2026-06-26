@@ -5,6 +5,7 @@ use Modules\TripManagement\Http\Controllers\Api\Customer\ParcelRefundController;
 use Modules\TripManagement\Http\Controllers\Api\Customer\SafetyAlertController;
 use Modules\TripManagement\Http\Controllers\Api\Customer\TripRequestController as NewCustomerTripController;
 use Modules\TripManagement\Http\Controllers\Api\Driver\TripRequestController as NewDriverTripController;
+use Modules\TripManagement\Http\Controllers\Api\Driver\TripStopController;
 use Modules\TripManagement\Http\Controllers\Api\PaymentController;
 
 /**
@@ -92,6 +93,13 @@ Route::group(['prefix' => 'driver', 'middleware' => ['auth:api', 'maintenance_mo
             Route::post('trip-action', 'requestAction');
             Route::post('bid', 'bid');
             Route::put('update-to-out-for-pickup/{tripId}', 'updateToOutForPickup');
+        });
+
+        Route::controller(TripStopController::class)->prefix('trip-stops')->group(function () {
+            Route::get('trip/{trip_request_id}', 'index');
+            Route::get('trip/{trip_request_id}/timeline', 'timeline');
+            Route::put('{stop_id}/arrive', 'arrive');
+            Route::post('{stop_id}/complete', 'complete');
         });
     });
     Route::group(['prefix' => 'safety-alert'], function () {

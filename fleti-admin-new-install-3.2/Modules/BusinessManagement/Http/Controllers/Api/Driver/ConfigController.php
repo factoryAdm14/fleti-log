@@ -185,6 +185,8 @@ class ConfigController extends Controller
             'is_real_time_location_sharing_enabled' => (bool) (businessConfig('enable_real_time_location_sharing', TRIP_SETTINGS)?->value ?? 0),
             'driver_additional_registration_form_fields' => AdditionalDataForm::fields(DRIVER),
             'enable_parcel_delivery_proof' => (bool) (businessConfig('enable_parcel_delivery_proof', PARCEL_SETTINGS)?->value ?? 0),
+            'enable_multi_stop_delivery' => (bool) (businessConfig('enable_multi_stop_delivery', PARCEL_SETTINGS)?->value ?? 0),
+            'multi_stop_max_stops' => (int) (businessConfig('multi_stop_max_stops', PARCEL_SETTINGS)?->value ?? 20),
         ];
 
         return response()->json($configs);

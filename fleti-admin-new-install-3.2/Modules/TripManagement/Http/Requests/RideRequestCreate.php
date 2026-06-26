@@ -90,6 +90,7 @@ class RideRequestCreate extends FormRequest
             // Encoded Polyline and Zone Information
             'encoded_polyline' => 'sometimes',
             'zone_id' => 'required|uuid|exists:zones,id',
+            'stops' => 'nullable',
         ];
     }
 

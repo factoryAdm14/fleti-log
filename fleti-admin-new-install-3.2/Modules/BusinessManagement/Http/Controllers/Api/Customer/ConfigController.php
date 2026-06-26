@@ -179,6 +179,8 @@ class ConfigController extends Controller
             'maximum_parcel_weight_status' => (bool)$info->firstWhere('key_name', 'max_parcel_weight_status')?->value == 1,
             'maximum_parcel_weight_capacity' => $info->firstWhere('key_name', 'max_parcel_weight_status')?->value == 1 ? (double)$info->firstWhere('key_name', 'max_parcel_weight')?->value : null,
             'parcel_weight_unit' => businessConfig(key: 'parcel_weight_unit', settingsType: PARCEL_SETTINGS)?->value ?? 'kg',
+            'enable_multi_stop_delivery' => (bool) (businessConfig('enable_multi_stop_delivery', PARCEL_SETTINGS)?->value ?? 0),
+            'multi_stop_max_stops' => (int) (businessConfig('multi_stop_max_stops', PARCEL_SETTINGS)?->value ?? 20),
             'safety_feature_status' => (bool)$info->firstWhere('key_name', 'safety_feature_status')?->value == 1,
             'safety_feature_minimum_trip_delay_time' => $info->firstWhere('key_name', 'safety_feature_status')?->value == 1 ? convertTimeToSecond(
                 $info->firstWhere('key_name', 'for_trip_delay')?->value['minimum_delay_time'],

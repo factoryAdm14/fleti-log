@@ -817,6 +817,15 @@ class TripRequestService extends BaseService implements TripRequestServiceInterf
                 $trip->parcelUserInfo()->createMany([$sender, $receiver]);
             }
 
+            if (($attributes['type'] ?? null) == 'parcel' && !empty($attributes['stops'])) {
+                $tripStopService = app(\Modules\TripManagement\Service\Interfaces\TripStopServiceInterface::class);
+                $stops = \Modules\TripManagement\Lib\MultiStopHelper::parseStops($attributes['stops']);
+                if (!\Modules\TripManagement\Lib\MultiStopHelper::isEnabled()) {
+                    throw new \RuntimeException('Multi-stop delivery is disabled.');
+                }
+                $tripStopService->createStopsForTrip($trip, $stops);
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             //throw $th;
@@ -2097,6 +2106,15 @@ class TripRequestService extends BaseService implements TripRequestServiceInterf
                     'user_type' => 'receiver'
                 ];
                 $trip->parcelUserInfo()->createMany([$sender, $receiver]);
+
+                if (!empty($attributes['stops'])) {
+                    $tripStopService = app(\Modules\TripManagement\Service\Interfaces\TripStopServiceInterface::class);
+                    $stops = \Modules\TripManagement\Lib\MultiStopHelper::parseStops($attributes['stops']);
+                    if (!\Modules\TripManagement\Lib\MultiStopHelper::isEnabled()) {
+                        throw new \RuntimeException('Multi-stop delivery is disabled.');
+                    }
+                    $tripStopService->createStopsForTrip($trip, $stops);
+                }
 
             }
         } catch (\Exception $e) {

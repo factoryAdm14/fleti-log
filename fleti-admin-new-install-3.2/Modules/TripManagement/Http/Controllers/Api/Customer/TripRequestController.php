@@ -156,6 +156,24 @@ class TripRequestController extends Controller
         }
         DB::beginTransaction();
         try {
+            if ($request->filled('stops')) {
+                if ($request->type !== PARCEL) {
+                    return response()->json(responseFormatter(DEFAULT_400), 403);
+                }
+                if (!\Modules\TripManagement\Lib\MultiStopHelper::isEnabled()) {
+                    return response()->json(responseFormatter(MULTI_STOP_DISABLED_403), 403);
+                }
+                try {
+                    \Modules\TripManagement\Lib\MultiStopHelper::validateStops(
+                        \Modules\TripManagement\Lib\MultiStopHelper::parseStops($request->stops)
+                    );
+                } catch (\InvalidArgumentException $exception) {
+                    return response()->json(responseFormatter(constant: DEFAULT_400, errors: [
+                        ['error_code' => 'stops', 'message' => $exception->getMessage()],
+                    ]), 403);
+                }
+            }
+
             if ($request->trip_request_id) {
                 $save_trip = $this->tripRequestService->findOneBy(criteria: ['id' => $request['trip_request_id']]);
                 $attributes = [
@@ -185,7 +203,7 @@ class TripRequestController extends Controller
             }
 
             if ($request->bid) {
-                $final = $this->tripRequestService->findOneBy(criteria: ['id' => $save_trip->id], relations: ['driver.lastLocations', 'time', 'coordinate', 'fee', 'parcelRefund']);
+                $final = $this->tripRequestService->findOneBy(criteria: ['id' => $save_trip->id], relations: ['driver.lastLocations', 'time', 'coordinate', 'fee', 'parcelRefund', 'tripStops']);
             } else {
                 $vat_percent = (double)get_cache('vat_percent') ?? 1;
                 $estimatedAmount = $actualFare / (1 + ($vat_percent / 100));
@@ -202,7 +220,7 @@ class TripRequestController extends Controller
                     ];
                     $this->tripRequestService->updatedBy(criteria: ['id' => $save_trip->id], data: $attributes);
                 }
-                $final = $this->tripRequestService->findOneBy(criteria: ['id' => $save_trip->id], relations: ['driver.lastLocations', 'time', 'coordinate', 'fee', 'parcelRefund']);
+                $final = $this->tripRequestService->findOneBy(criteria: ['id' => $save_trip->id], relations: ['driver.lastLocations', 'time', 'coordinate', 'fee', 'parcelRefund', 'tripStops']);
             }
             DB::commit();
 
@@ -386,7 +404,7 @@ class TripRequestController extends Controller
     {
         $criteria = ['id' => $trip_request_id];
         $relations = ['driver', 'vehicle.model', 'vehicleCategory', 'tripStatus',
-            'coordinate', 'fee', 'time', 'parcel', 'parcelUserInfo', 'parcelRefund'];
+            'coordinate', 'fee', 'time', 'parcel', 'parcelUserInfo', 'parcelRefund', 'tripStops'];
         $withAvgRelation = ['driverReceivedReviews', 'rating'];
 
         $data = $this->tripRequestService->findOneWithAvg(criteria: $criteria, relations: $relations, withAvgRelation: $withAvgRelation);

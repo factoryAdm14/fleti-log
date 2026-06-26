@@ -140,6 +140,30 @@
                 </div>
             </div>
 
+            <div class="card mb-3">
+                <div class="card-header flex-md-nowrap flex-wrap d-flex align-items-center justify-content-between gap-3">
+                    <div class="w-0 flex-grow-1">
+                        <h5 class="mb-2">{{ translate('Enable Multi Stop Delivery') }}</h5>
+                        <div class="fs-14">
+                            {{ translate('Allow parcel deliveries with multiple pickup and dropoff stops (up to 20).') }}
+                        </div>
+                    </div>
+                    <div class="d-flex max-w-280px w-100 align-items-center gap-2 justify-content-between border rounded py-2 px-3">
+                        <label for="multiStopDelivery" class="fs-14 text-dark">{{ translate('Status') }}</label>
+                        <label class="switcher rounded-pill cmn_focus">
+                            <input class="switcher_input collapsible-card-switcher update-business-setting" tabindex="1"
+                                   id="multiStopDelivery" type="checkbox" name="enable_multi_stop_delivery"
+                                   data-name="enable_multi_stop_delivery" data-type="{{ PARCEL_SETTINGS }}"
+                                   data-url="{{ route('admin.business.setup.update-business-setting') }}"
+                                   data-title="{{ translate('Are you sure') }}?"
+                                   data-confirm-btn="{{ ($settings->firstWhere('key_name', 'enable_multi_stop_delivery')->value ?? 0) == 1 ? translate('Turn Off') : translate('Turn On') }}"
+                                {{ ($settings->firstWhere('key_name', 'enable_multi_stop_delivery')->value ?? 0) == 1 ? 'checked' : '' }}>
+                            <span class="switcher_control"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="card mb-3 text-capitalize">
                 <form action="{{ route('admin.business.setup.parcel.store') . '?type=' . PARCEL_SETTINGS }}"
                       id="parcel_form" method="POST">

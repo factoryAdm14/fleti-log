@@ -686,7 +686,7 @@ class TripRequestController extends Controller
     public function rideStatusUpdate(Request $request)
     {
         $trip = $this->tripRequestService->findOneBy(criteria: ['id' => $request->trip_request_id], relations: ['customer']);
-        $requireDeliveryProof = $trip && $trip->is_parcel_delivery_proof_enabled && $trip->type == PARCEL && $request->status == COMPLETED;
+        $requireDeliveryProof = $trip && $trip->is_parcel_delivery_proof_enabled && $trip->type == PARCEL && $request->status == COMPLETED && !$trip->is_multi_stop;
 
         $rules = [
             'status' => 'required',
@@ -721,6 +721,13 @@ class TripRequestController extends Controller
         if ($trip->is_paused) {
 
             return response()->json(responseFormatter(TRIP_REQUEST_PAUSED_404), 403);
+        }
+
+        if ($trip->is_multi_stop && $request->status == COMPLETED) {
+            $tripStopService = app(\Modules\TripManagement\Service\Interfaces\TripStopServiceInterface::class);
+            if (!$tripStopService->allStopsCompleted($trip->id)) {
+                return response()->json(responseFormatter(MULTI_STOP_INCOMPLETE_403), 403);
+            }
         }
 
         $uploadedDeliveryImages = [];

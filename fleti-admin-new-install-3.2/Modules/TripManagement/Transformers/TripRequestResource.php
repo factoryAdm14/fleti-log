@@ -66,6 +66,11 @@ class TripRequestResource extends JsonResource
             'rise_request_count' => $this->rise_request_count,
             'type' => $this->type == PARCEL ? PARCEL : ($this->ride_request_type == 'scheduled' ? 'scheduled_request' : RIDE_REQUEST),
             'is_parcel_delivery_proof_enabled' => (int)$this->is_parcel_delivery_proof_enabled,
+            'is_multi_stop' => (bool) $this->is_multi_stop,
+            'trip_stops' => $this->when(
+                $this->is_multi_stop && $this->relationLoaded('tripStops'),
+                fn () => TripStopResource::collection($this->tripStops)
+            ),
             'scheduled_at' => $this->scheduled_at ?? null,
             'created_at' => $this->created_at,
             'entrance' => $this->entrance,
