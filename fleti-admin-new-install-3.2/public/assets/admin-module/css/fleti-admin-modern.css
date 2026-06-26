@@ -1,0 +1,401 @@
+/**
+ * Fleti Enterprise v4 — Admin Modernization (FASE 008)
+ * Visual-only overrides. Scoped to body.fleti-admin-v4.
+ */
+
+body.fleti-admin-v4 {
+  --fleti-admin-bg: #f4f9f8;
+  --fleti-admin-surface: #ffffff;
+  --fleti-admin-border: rgba(41, 50, 49, 0.1);
+  --fleti-admin-muted: #6b7a78;
+  --fleti-admin-radius: 0.875rem;
+  --fleti-admin-radius-sm: 0.5rem;
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+
+body.fleti-admin-v4 .main-area {
+  background: var(--fleti-admin-bg);
+}
+
+body.fleti-admin-v4 .main-content {
+  padding-top: 0.5rem;
+}
+
+body.fleti-admin-v4 .container-fluid {
+  max-width: 1440px;
+}
+
+/* ── Welcome banner (dashboard) ─────────────────────── */
+
+body.fleti-admin-v4 .fleti-welcome-banner {
+  background: var(--fleti-admin-surface);
+  border: 1px solid var(--fleti-admin-border);
+  border-radius: var(--fleti-admin-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+body.fleti-admin-v4 .fleti-welcome-banner h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+body.fleti-admin-v4 .fleti-welcome-banner p {
+  color: var(--fleti-admin-muted);
+  margin-bottom: 0;
+}
+
+/* ── Cards ────────────────────────────────────────────── */
+
+body.fleti-admin-v4 .card {
+  border: 1px solid var(--fleti-admin-border);
+  border-radius: var(--fleti-admin-radius);
+  box-shadow: none !important;
+  background: var(--fleti-admin-surface);
+  overflow: hidden;
+}
+
+body.fleti-admin-v4 .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--fleti-admin-border);
+  padding: 1rem 1.25rem;
+}
+
+body.fleti-admin-v4 .card-header h4,
+body.fleti-admin-v4 .card-header h5,
+body.fleti-admin-v4 .card-header h6 {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+body.fleti-admin-v4 .card-body {
+  padding: 1.25rem;
+}
+
+body.fleti-admin-v4 .p-30 {
+  padding: 1.25rem !important;
+}
+
+body.fleti-admin-v4 .card hr {
+  border-color: var(--fleti-admin-border);
+  opacity: 1;
+  margin: 1rem 0;
+}
+
+/* ── Dashboard metric blocks ──────────────────────────── */
+
+body.fleti-admin-v4 .level-status {
+  border-radius: var(--fleti-admin-radius-sm);
+  box-shadow: none !important;
+}
+
+body.fleti-admin-v4 .level-status .svg {
+  max-width: 1.5rem;
+  max-height: 1.5rem;
+}
+
+body.fleti-admin-v4 .title-color {
+  color: var(--fleti-admin-muted) !important;
+}
+
+/* ── Page headings ────────────────────────────────────── */
+
+body.fleti-admin-v4 .main-content h2.fs-22,
+body.fleti-admin-v4 .main-content h4.text-capitalize {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+
+body.fleti-admin-v4 .btn {
+  border-radius: var(--fleti-admin-radius-sm);
+  font-weight: 600;
+  font-size: 0.875rem;
+  min-height: 2.5rem;
+  padding: 0.4375rem 1rem;
+  box-shadow: none !important;
+}
+
+body.fleti-admin-v4 .btn-primary {
+  border-color: var(--bs-primary, #14b19e);
+}
+
+body.fleti-admin-v4 .btn-outline-primary {
+  border-width: 1px;
+}
+
+body.fleti-admin-v4 .btn-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ── Forms & search ───────────────────────────────────── */
+
+body.fleti-admin-v4 .theme-input-style,
+body.fleti-admin-v4 .form-control,
+body.fleti-admin-v4 .form-select,
+body.fleti-admin-v4 .js-select {
+  border-radius: var(--fleti-admin-radius-sm);
+  border-color: var(--fleti-admin-border);
+  min-height: 2.5rem;
+  box-shadow: none !important;
+}
+
+body.fleti-admin-v4 .theme-input-style:focus,
+body.fleti-admin-v4 .form-control:focus,
+body.fleti-admin-v4 .form-select:focus {
+  border-color: var(--bs-primary, #14b19e);
+  box-shadow: 0 0 0 0.15rem rgba(20, 177, 158, 0.12) !important;
+}
+
+body.fleti-admin-v4 .search-form__input_group {
+  border-radius: var(--fleti-admin-radius-sm);
+  border: 1px solid var(--fleti-admin-border);
+  overflow: hidden;
+  background: var(--fleti-admin-surface);
+}
+
+body.fleti-admin-v4 .search-form__input {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.fleti-admin-v4 .table-top {
+  gap: 0.75rem !important;
+  margin-bottom: 1rem;
+}
+
+/* ── Tables ───────────────────────────────────────────── */
+
+body.fleti-admin-v4 .table {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+body.fleti-admin-v4 .table thead th {
+  background: #f7fbfb;
+  color: var(--title-color, #293231);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--fleti-admin-border);
+  padding: 0.875rem 1rem;
+  white-space: nowrap;
+}
+
+body.fleti-admin-v4 .table tbody td {
+  padding: 0.875rem 1rem;
+  vertical-align: middle;
+  border-color: var(--fleti-admin-border);
+}
+
+body.fleti-admin-v4 .table-hover tbody tr:hover {
+  background: rgba(20, 177, 158, 0.04);
+}
+
+body.fleti-admin-v4 table.dataTable {
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+
+body.fleti-admin-v4 .dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: var(--fleti-admin-radius-sm) !important;
+}
+
+/* ── Nav tabs (list filters) ──────────────────────────── */
+
+body.fleti-admin-v4 .nav--tabs {
+  background: var(--fleti-admin-surface) !important;
+  border: 1px solid var(--fleti-admin-border);
+  border-radius: var(--fleti-admin-radius-sm);
+  padding: 0.25rem !important;
+  gap: 0.125rem;
+}
+
+body.fleti-admin-v4 .nav--tabs .nav-link {
+  border-radius: calc(var(--fleti-admin-radius-sm) - 2px);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.5rem 0.875rem;
+  color: var(--fleti-admin-muted);
+  border: 0;
+}
+
+body.fleti-admin-v4 .nav--tabs .nav-link.active {
+  background: rgba(20, 177, 158, 0.12) !important;
+  color: var(--bs-primary, #14b19e) !important;
+}
+
+/* ── Badges & status ──────────────────────────────────── */
+
+body.fleti-admin-v4 .badge {
+  font-weight: 600;
+  font-size: 0.6875rem;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+}
+
+body.fleti-admin-v4 .badge.bg-primary {
+  background: rgba(20, 177, 158, 0.15) !important;
+  color: var(--bs-primary, #14b19e) !important;
+}
+
+body.fleti-admin-v4 .badge.bg-success {
+  background: rgba(48, 184, 119, 0.15) !important;
+  color: #30b877 !important;
+}
+
+body.fleti-admin-v4 .badge.bg-danger {
+  background: rgba(255, 109, 109, 0.15) !important;
+  color: #ff6d6d !important;
+}
+
+body.fleti-admin-v4 .badge.bg-warning {
+  background: #fff4e5 !important;
+  color: #e67e22 !important;
+}
+
+/* ── Sidebar ──────────────────────────────────────────── */
+
+body.fleti-admin-v4 .aside {
+  border-right: 1px solid var(--fleti-admin-border);
+  box-shadow: none !important;
+}
+
+body.fleti-admin-v4 .main-nav .nav-category {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fleti-admin-muted);
+  padding-top: 0.75rem;
+}
+
+body.fleti-admin-v4 .main-nav > li > a {
+  border-radius: var(--fleti-admin-radius-sm);
+  margin: 0.125rem 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+body.fleti-admin-v4 .main-nav > li.active > a,
+body.fleti-admin-v4 .main-nav > li.open > a {
+  background: rgba(20, 177, 158, 0.1);
+}
+
+body.fleti-admin-v4 .main-nav .sub-menu a {
+  border-radius: var(--fleti-admin-radius-sm);
+  font-size: 0.8125rem;
+}
+
+body.fleti-admin-v4 .aside-search .search-form__input_group {
+  border-radius: var(--fleti-admin-radius-sm);
+}
+
+body.fleti-admin-v4 .user-profile .card-title {
+  font-size: 0.8125rem;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+
+body.fleti-admin-v4 .header {
+  border-bottom: 1px solid var(--fleti-admin-border);
+  box-shadow: none !important;
+  background: var(--fleti-admin-surface);
+}
+
+/* ── Charts & dashboard widgets ─────────────────────── */
+
+body.fleti-admin-v4 .fleti-chart-card,
+body.fleti-admin-v4 .card .card-body #apex_line-chart,
+body.fleti-admin-v4 .card .card-body [id$="Statistics"],
+body.fleti-admin-v4 .card .card-body [id^="leader-board"] {
+  min-height: auto;
+}
+
+body.fleti-admin-v4 .recent-transactions .events .event .knob {
+  border-color: var(--bs-primary, #14b19e);
+}
+
+body.fleti-admin-v4 .recent-transactions .events .line {
+  background: var(--fleti-admin-border);
+}
+
+/* ── Modals & dropdowns ───────────────────────────────── */
+
+body.fleti-admin-v4 .modal-content {
+  border: 1px solid var(--fleti-admin-border);
+  border-radius: var(--fleti-admin-radius);
+  box-shadow: 0 8px 30px rgba(41, 50, 49, 0.08) !important;
+}
+
+body.fleti-admin-v4 .dropdown-menu {
+  border: 1px solid var(--fleti-admin-border);
+  border-radius: var(--fleti-admin-radius-sm);
+  box-shadow: 0 4px 16px rgba(41, 50, 49, 0.06) !important;
+}
+
+/* ── Pagination ───────────────────────────────────────── */
+
+body.fleti-admin-v4 .page-link {
+  border-radius: var(--fleti-admin-radius-sm);
+  border-color: var(--fleti-admin-border);
+  color: var(--fleti-admin-muted);
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+body.fleti-admin-v4 .page-item.active .page-link {
+  background: var(--bs-primary, #14b19e);
+  border-color: var(--bs-primary, #14b19e);
+}
+
+/* ── Zone / map pages ─────────────────────────────────── */
+
+body.fleti-admin-v4 #map-canvas,
+body.fleti-admin-v4 .map-container {
+  border-radius: var(--fleti-admin-radius-sm);
+  border: 1px solid var(--fleti-admin-border);
+  overflow: hidden;
+}
+
+/* ── Footer ───────────────────────────────────────────── */
+
+body.fleti-admin-v4 .footer {
+  border-top: 1px solid var(--fleti-admin-border);
+  background: transparent;
+  color: var(--fleti-admin-muted);
+  font-size: 0.8125rem;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 767.98px) {
+  body.fleti-admin-v4 .fleti-welcome-banner {
+    padding: 1rem;
+  }
+
+  body.fleti-admin-v4 .card-body,
+  body.fleti-admin-v4 .p-30 {
+    padding: 1rem !important;
+  }
+
+  body.fleti-admin-v4 .nav--tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  body.fleti-admin-v4 .table-top {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  body.fleti-admin-v4 .search-form {
+    width: 100%;
+  }
+}

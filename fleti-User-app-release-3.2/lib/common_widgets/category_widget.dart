@@ -5,6 +5,7 @@ import 'package:ride_sharing_user_app/features/home/domain/models/categoty_model
 import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.dart';
 import 'package:ride_sharing_user_app/features/set_destination/screens/set_destination_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
+import 'package:ride_sharing_user_app/theme/fleti_design_tokens.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -33,8 +34,13 @@ class CategoryWidget extends StatelessWidget {
         Container(height: isSelected != null ? 80 : 70, width: isSelected != null ? 80 : 70,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-            color:  (isSelected != null && isSelected!) ? Theme.of(context).primaryColor.withValues(alpha:0.8)
-                : Theme.of(context).hintColor.withValues(alpha:0.1),
+            color:  (isSelected != null && isSelected!) ? Theme.of(context).primaryColor.withValues(alpha:0.12)
+                : Theme.of(context).hintColor.withValues(alpha:0.08),
+            border: Border.all(
+              color: (isSelected != null && isSelected!)
+                  ? Theme.of(context).primaryColor.withValues(alpha: 0.35)
+                  : FletiDesignTokens.border(context),
+            ),
           ),
           padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
           margin: const EdgeInsets.only(right: Dimensions.paddingSizeSmall),

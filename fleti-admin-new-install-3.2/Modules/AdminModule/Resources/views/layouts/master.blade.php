@@ -55,6 +55,8 @@
     <!-- ======= MAIN STYLES ======= -->
     <link rel="stylesheet" href="{{ dynamicAsset('public/assets/admin-module/css/style.css') }}"/>
     <link rel="stylesheet" href="{{ dynamicAsset('public/assets/admin-module/css/custom.css') }}"/>
+    <link rel="stylesheet" href="{{ dynamicAsset('public/assets/admin-module/css/fleti-design-system.css') }}"/>
+    <link rel="stylesheet" href="{{ dynamicAsset('public/assets/admin-module/css/fleti-admin-modern.css') }}"/>
     @include('adminmodule::layouts.css')
     <!-- ======= END MAIN STYLES ======= -->
 
@@ -63,7 +65,7 @@
     @stack('css_or_js2')
 </head>
 
-<body>
+<body class="fleti-admin-v4">
 <script>
     localStorage.theme && document.querySelector('body').setAttribute("theme", localStorage.theme);
     localStorage.dir && document.querySelector('html').setAttribute("dir", localStorage.dir);

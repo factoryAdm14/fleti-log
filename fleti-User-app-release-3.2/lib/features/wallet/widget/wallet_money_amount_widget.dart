@@ -4,6 +4,7 @@ import 'package:ride_sharing_user_app/features/wallet/widget/add_fund_dialog.dar
 import 'package:ride_sharing_user_app/features/wallet/widget/point_to_wallet_money_widget.dart';
 import 'package:ride_sharing_user_app/helper/display_helper.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
+import 'package:ride_sharing_user_app/theme/fleti_modern_decorations.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -38,11 +39,7 @@ class WalletMoneyAmountWidget extends StatelessWidget {
             child: Padding(padding: const EdgeInsets.fromLTRB(
                 Dimensions.paddingSizeDefault,0, Dimensions.paddingSizeSmall,Dimensions.paddingSizeSmall),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeDefault),
-                  boxShadow: [BoxShadow(color: Theme.of(context).hintColor.withValues(alpha: 0.3), blurRadius: 10, offset: Offset(0, 1))]
-                ),
+                decoration: FletiModernDecorations.card(context),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: Dimensions.paddingSizeExtraLarge,

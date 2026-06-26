@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ride_sharing_user_app/common_widgets/app_bar_widget.dart';
+import 'package:ride_sharing_user_app/theme/fleti_modern_decorations.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 
 class BodyWidget extends StatefulWidget {
@@ -21,14 +22,12 @@ class _BodyWidgetState extends State<BodyWidget> {
       Expanded(child: Container(
         margin: EdgeInsets.only(top: widget.topMargin),
         width: Dimensions.webMaxWidth,
-        decoration:  BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(25), topLeft: Radius.circular(25),
-        ),
-          color: Theme.of(context).cardColor,
-        ),
+        decoration: FletiModernDecorations.bodyPanel(context),
         child: ClipRRect(
-          borderRadius: const BorderRadius.only(topRight: Radius.circular(25), topLeft: Radius.circular(25)),
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(Dimensions.radiusExtraLarge),
+            topLeft: Radius.circular(Dimensions.radiusExtraLarge),
+          ),
             child: widget.body,
         ),
       )),

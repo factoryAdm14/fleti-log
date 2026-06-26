@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/helper/date_converter.dart';
 import 'package:ride_sharing_user_app/helper/price_converter.dart';
+import 'package:ride_sharing_user_app/theme/fleti_modern_decorations.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -20,7 +21,9 @@ class TransactionCard extends StatelessWidget {
       child: GetBuilder<WalletController>(
           builder: (walletController) {
             return Column(children: [
-              Padding(padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+              Container(
+                decoration: FletiModernDecorations.card(context, radius: Dimensions.radiusDefault),
+                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                 child: Row(children: [
                   Image.asset(
                     Images.myEarnIcon,
@@ -49,10 +52,7 @@ class TransactionCard extends StatelessWidget {
                       horizontal: Dimensions.paddingSizeDefault,
                       vertical: Dimensions.paddingSizeSeven,
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: Theme.of(context).hintColor.withValues(alpha:0.15),
-                    ),
+                    decoration: FletiModernDecorations.pill(context),
                     child: Text(
                       '${transaction.debit! > 0 ? '-' : '+'} ${PriceConverter.convertPrice(transaction.debit! > 0 ?
                       transaction.debit! :

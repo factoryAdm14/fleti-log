@@ -1,9 +1,10 @@
  import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ride_sharing_user_app/theme/custom_theme_color.dart';
+import 'package:ride_sharing_user_app/theme/fleti_theme_modern.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
 
-ThemeData lightTheme = ThemeData(
+ThemeData lightTheme = applyFletiModernTheme(ThemeData(
   fontFamily: AppConstants.fontFamily,
   primaryColor: const Color(0xFF14B19E),
   primaryColorDark: const Color(0xFF007B6C),
@@ -60,4 +61,4 @@ ThemeData lightTheme = ThemeData(
   extensions: <ThemeExtension<CustomThemeColors>>[
     CustomThemeColors.light(),
   ],
-);
+));

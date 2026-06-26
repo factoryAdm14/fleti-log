@@ -7,11 +7,11 @@
 @endpush
 
 @section('content')
-    <div class="main-content">
+    <div class="main-content fleti-dashboard">
         <div class="container-fluid">
             <div class="row align-items-center mb-3 g-2">
                 <div class="col-12">
-                    <div class="media gap-3">
+                    <div class="fleti-welcome-banner media gap-3">
                         <img width="38" src="{{dynamicAsset('public/assets/admin-module/img/media/car.png')}}" loading="eager"
                              alt="">
                         <div class="media-body text-dark">

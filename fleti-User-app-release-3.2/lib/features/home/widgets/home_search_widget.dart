@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/voice_search_dialog.dart';
+import 'package:ride_sharing_user_app/theme/fleti_design_tokens.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -8,6 +9,11 @@ import 'package:ride_sharing_user_app/features/set_destination/screens/set_desti
 
 class HomeSearchWidget extends StatelessWidget {
   const HomeSearchWidget({super.key});
+
+  InputBorder _border(BuildContext context) => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(FletiDesignTokens.radiusLg),
+        borderSide: BorderSide(color: FletiDesignTokens.border(context)),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -21,39 +27,21 @@ class HomeSearchWidget extends StatelessWidget {
         textAlignVertical: TextAlignVertical.center,
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
-
-          // InputBorder? errorBorder,
-          // InputBorder? focusedErrorBorder,
-          // InputBorder? enabledBorder,
-
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
           contentPadding: const EdgeInsets.symmetric(
             horizontal :Dimensions.paddingSizeDefault,
             vertical:Dimensions.paddingSizeExtraSmall,
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
-          ),
+          border: _border(context),
+          enabledBorder: _border(context),
+          errorBorder: _border(context),
+          focusedErrorBorder: _border(context),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
+            borderRadius: BorderRadius.circular(FletiDesignTokens.radiusLg),
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
           ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide( color: Theme.of(context).primaryColor.withValues(alpha:0.2)),
-          ),
+          disabledBorder: _border(context),
           isDense: true,
           hintText: 'where_to_go'.tr,
           hintStyle: textRegular.copyWith(
