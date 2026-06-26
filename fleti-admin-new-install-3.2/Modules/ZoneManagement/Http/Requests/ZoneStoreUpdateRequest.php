@@ -17,7 +17,15 @@ class ZoneStoreUpdateRequest extends FormRequest
         $id = $this->id;
         return [
             'name' => 'required|max:191|unique:zones,name,'.$id,
-            'coordinates' => 'required',
+            'coordinates' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $count = preg_match_all('/\([^)]+\)/', (string) $value, $matches);
+                    if ($count < 3) {
+                        $fail(translate('click_this_icon_to_start_pin_points_in_the_map_and_connect_the_dots_together_to_draw_a_zone_._Minimum_3_points_required'));
+                    }
+                },
+            ],
         ];
     }
 

@@ -521,16 +521,18 @@
     @php($map_key = businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null)
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ $map_key }}&libraries=drawing,places&v=3.50"></script>
+    <script src="{{dynamicAsset('public/assets/admin-module/js/zone-management/zone/map-zone-utils.js') }}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/js/zone-management/zone/index.js') }}"></script>
     <script>
         "use strict";
-        //zone form submit
+        window.zoneMapMessages = {
+            defineZone: @json(translate('please_define_zone')),
+            minPoints: @json(translate('click_this_icon_to_start_pin_points_in_the_map_and_connect_the_dots_together_to_draw_a_zone_._Minimum_3_points_required')),
+        };
+
         $('#zone_form').on('submit', function (e) {
-            if ($('#coordinates').val() === '') {
-                toastr.error('{{ translate('please_define_zone') }}')
-                e.preventDefault();
-            }
-        })
+            FletiZoneMap.validateFormSubmit(e, 3);
+        });
         let permission = false;
         @can('business_edit')
             permission = true;
@@ -566,16 +568,15 @@
             controlUI.appendChild(controlText);
             // Setup the click event listeners: simply set the map to Chicago.
             controlUI.addEventListener("click", () => {
-                lastPolygon.setMap(null);
+                FletiZoneMap.safeClearPolygon(lastPolygon);
+                lastPolygon = null;
                 $('#coordinates').val('');
+                FletiZoneMap.autoGrow('coordinates');
             });
         }
 
         function initialize() {
-            let myLatLng = {
-                lat: 23.757989,
-                lng: 90.360587
-            };
+            let myLatLng = FletiZoneMap.defaultCenter;
 
             let myOptions = {
                 zoom: 10,
@@ -595,26 +596,18 @@
                 }
             });
             drawingManager.setMap(map);
-            // Try HTML5 geolocation.
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const pos = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
-                        map.setCenter(pos);
-                    });
-            }
+            FletiZoneMap.centerMapFromGeolocation(map);
 
             google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-
-                if (lastPolygon) {
-                    lastPolygon.setMap(null);
+                if (event.type !== google.maps.drawing.OverlayType.POLYGON) {
+                    return;
                 }
-                $('#coordinates').val(event.overlay.getPath().getArray());
+                FletiZoneMap.safeClearPolygon(lastPolygon);
                 lastPolygon = event.overlay;
-                auto_grow();
+                const formatted = FletiZoneMap.setCoordinatesFromOverlay(event.overlay);
+                if (!FletiZoneMap.hasMinimumPoints(formatted, 3)) {
+                    toastr.warning(window.zoneMapMessages.minPoints);
+                }
             });
 
             const resetDiv = document.createElement("div");

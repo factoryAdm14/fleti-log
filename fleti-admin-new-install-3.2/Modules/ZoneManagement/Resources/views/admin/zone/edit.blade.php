@@ -100,15 +100,19 @@
     @php($map_key = businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null)
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{ $map_key }}&libraries=drawing,places&v=3.50"></script>
+    <script src="{{dynamicAsset('public/assets/admin-module/js/zone-management/zone/map-zone-utils.js') }}"></script>
     <script>
         "use strict";
-        auto_grow();
+        window.zoneMapMessages = {
+            defineZone: @json(translate('please_define_zone')),
+            minPoints: @json(translate('click_this_icon_to_start_pin_points_in_the_map_and_connect_the_dots_together_to_draw_a_zone_._Minimum_3_points_required')),
+        };
 
-        function auto_grow() {
-            let element = document.getElementById("coordinates");
-            element.style.height = "5px";
-            element.style.height = (element.scrollHeight) + "px";
-        }
+        FletiZoneMap.autoGrow('coordinates');
+
+        $('#zone_form').on('submit', function (e) {
+            FletiZoneMap.validateFormSubmit(e, 3);
+        });
 
         let map; // Global declaration of the map
         let lat_longs = new Array();
@@ -143,9 +147,10 @@
             controlUI.appendChild(controlText);
             // Setup the click event listeners: simply set the map to Chicago.
             controlUI.addEventListener("click", () => {
-                lastpolygon.setMap(null);
+                FletiZoneMap.safeClearPolygon(lastpolygon);
+                lastpolygon = null;
                 $('#coordinates').val('');
-
+                FletiZoneMap.autoGrow('coordinates');
             });
         }
 
@@ -200,17 +205,15 @@
             drawingManager.setMap(map);
 
             google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-                let newShape = event.overlay;
-                newShape.type = event.type;
-            });
-
-            google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-                if (lastpolygon) {
-                    lastpolygon.setMap(null);
+                if (event.type !== google.maps.drawing.OverlayType.POLYGON) {
+                    return;
                 }
-                $('#coordinates').val(event.overlay.getPath().getArray());
+                FletiZoneMap.safeClearPolygon(lastpolygon);
                 lastpolygon = event.overlay;
-                auto_grow();
+                const formatted = FletiZoneMap.setCoordinatesFromOverlay(event.overlay);
+                if (!FletiZoneMap.hasMinimumPoints(formatted, 3)) {
+                    toastr.warning(window.zoneMapMessages.minPoints);
+                }
             });
             const resetDiv = document.createElement("div");
             resetMap(resetDiv, lastpolygon);
@@ -307,8 +310,10 @@
 
         $('#reset_btn').click(function () {
             $('#name').val(null);
-            lastpolygon.setMap(null);
+            FletiZoneMap.safeClearPolygon(lastpolygon);
+            lastpolygon = null;
             $('#coordinates').val(null);
+            FletiZoneMap.autoGrow('coordinates');
         })
 
     </script>
