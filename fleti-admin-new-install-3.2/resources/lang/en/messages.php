@@ -312,6 +312,7 @@
   'secret_key' => 'Secret key',
   'hash' => 'Hash',
   'mercadopago' => 'Mercadopago',
+  'mercadopago_pix' => 'PIX Mercado Pago',
   'access_token' => 'Access token',
   'amount_to_be_paid' => 'Amount to be paid',
   'card_holder_name' => 'Card holder name',

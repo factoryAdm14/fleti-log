@@ -47,14 +47,14 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
         }
 
         return [
-            'gateway' => 'required|in:ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
+            'gateway' => 'required|in:ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,cash_after_service,digital_payment,momo',
             'mode' => 'required|in:live,test',
             'gateway_image' => 'nullable|mimes:png|max:' . convertBytesToKiloBytes(maxUploadSize('image')),
             'gateway_title' => Rule::requiredIf(function () {
                 return $this->input('status') == 1;
             }),
             'status' => [
-                'required_if:gateway,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
+                'required_if:gateway,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,mercadopago_pix,cash_after_service,digital_payment,momo',
                 Rule::in([1, 0])
             ],
             #SSl_Commerz
@@ -137,6 +137,7 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
                 Rule::requiredIf(function () {
                     return ($this->input('status') == 1 &&
                         ($this->input('gateway') == 'paystack' || $this->input('gateway') == 'mercadopago'
+                            || $this->input('gateway') == 'mercadopago_pix'
                             || $this->input('gateway') == 'liqpay' || $this->input('gateway') == 'flutterwave' || $this->input('gateway') == 'paymob_accept'));
                 })
             ],
@@ -164,7 +165,7 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
             #mercadopago
             'access_token' => [
                 Rule::requiredIf(function () {
-                    return ($this->input('status') == 1 && $this->input('gateway') == 'mercadopago');
+                    return ($this->input('status') == 1 && in_array($this->input('gateway'), ['mercadopago', 'mercadopago_pix'], true));
                 })
             ],
             #liqpay

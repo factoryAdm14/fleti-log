@@ -63,6 +63,8 @@ trait Payment
             return url("payment/senang-pay/pay/?payment_id={$payment->id}");
         }else if($payment->payment_method == 'mercadopago'){
             return url("payment/mercadopago/pay/?payment_id={$payment->id}");
+        }else if($payment->payment_method == 'mercadopago_pix'){
+            return url("payment/mercadopago-pix/pay/?payment_id={$payment->id}");
         }else if($payment->payment_method == 'bkash'){
             return url("payment/bkash/make-payment/?payment_id={$payment->id}");
         }else if($payment->payment_method == 'paystack'){

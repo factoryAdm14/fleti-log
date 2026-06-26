@@ -14,6 +14,7 @@ const PAYMENT_METHODS = [
     ['key' => 'paytabs', 'value' => 'Pay Tabs'],
     ['key' => 'liqpay', 'value' => 'Liq Pay'],
     ['key' => 'mercadopago', 'value' => 'Mercadopago'],
+    ['key' => 'mercadopago_pix', 'value' => 'PIX Mercado Pago'],
     ['key' => 'bkash', 'value' => 'Bkash'],
     ['key' => 'fatoorah', 'value' => 'Fatoorah'],
     ['key' => 'xendit', 'value' => 'Xendit'],

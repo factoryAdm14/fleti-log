@@ -18,6 +18,7 @@ use Modules\Gateways\Http\Controllers\BkashPaymentController;
 use Modules\Gateways\Http\Controllers\FlutterwaveV3Controller;
 use Modules\Gateways\Http\Controllers\LiqPayController;
 use Modules\Gateways\Http\Controllers\MercadoPagoController;
+use Modules\Gateways\Http\Controllers\MercadoPagoPixController;
 use Modules\Gateways\Http\Controllers\PaymobController;
 use Modules\Gateways\Http\Controllers\PaypalPaymentController;
 use Modules\Gateways\Http\Controllers\PaystackController;
@@ -115,6 +116,14 @@ Route::group(['prefix' => 'payment'], function () {
     Route::group(['prefix' => 'mercadopago', 'as' => 'mercadopago.'], function () {
         Route::get('pay', [MercadoPagoController::class, 'index'])->name('index');
         Route::post('make-payment', [MercadoPagoController::class, 'make_payment'])->name('make_payment');
+    });
+
+    //MERCADOPAGO PIX
+    Route::group(['prefix' => 'mercadopago-pix', 'as' => 'mercadopago_pix.'], function () {
+        Route::get('pay', [MercadoPagoPixController::class, 'index'])->name('pay');
+        Route::get('status', [MercadoPagoPixController::class, 'status'])->name('status');
+        Route::post('webhook', [MercadoPagoPixController::class, 'webhook'])->name('webhook')
+            ->withoutMiddleware([VerifyCsrfToken::class]);
     });
 
     //PAYMOB
