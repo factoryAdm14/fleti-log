@@ -8,6 +8,7 @@ import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.
 import 'package:ride_sharing_user_app/features/set_destination/screens/set_destination_screen.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
 
@@ -16,77 +17,117 @@ class CategoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CategoryController>(builder: (categoryController){
-      return SizedBox(
-        height: 105, width: Get.width,
-        child: ListView(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          children: [
-            categoryController.categoryList != null ?
-            categoryController.categoryList!.isNotEmpty ?
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: categoryController.categoryList!.length,
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.horizontal,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return CategoryWidget(index: index, category: categoryController.categoryList![index]);
-                }
-            ) :
-            const SizedBox() :
-            const CategoryShimmer(),
+    return GetBuilder<CategoryController>(builder: (categoryController) {
+      final categories = categoryController.categoryList;
+      final showSchedule = Get.find<ConfigController>().config?.scheduleTripStatus ?? false;
 
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: InkWell(
-                onTap: () => Get.to(() =>  const ParcelScreen()),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.center,children: [
-                  Container(width: 75, height: 70,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), color: Theme.of(context).hintColor.withValues(alpha:.15),
-                    ),
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: Image.asset(Images.parcel),
-                    ),
-                  ),
-                  Text('parcel'.tr, style: textSemiBold.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha:0.8),
-                    fontSize: Dimensions.fontSizeSmall,
-                  )),
-                ]),
+      if (categories == null) {
+        return const SizedBox(height: 105, child: CategoryShimmer());
+      }
+
+      if (categories.isEmpty) {
+        return SizedBox(
+          height: 105,
+          width: Get.width,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            cacheExtent: FletiPerformanceConfig.listCacheExtent,
+            children: [
+              _parcelTile(context),
+              if (showSchedule) _scheduleTile(context),
+            ],
+          ),
+        );
+      }
+
+      final extraTiles = 1 + (showSchedule ? 1 : 0);
+
+      return SizedBox(
+        height: 105,
+        width: Get.width,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          cacheExtent: FletiPerformanceConfig.listCacheExtent,
+          itemCount: categories.length + extraTiles,
+          itemBuilder: (context, index) {
+            if (index < categories.length) {
+              return CategoryWidget(index: index, category: categories[index]);
+            }
+            if (index == categories.length) {
+              return _parcelTile(context);
+            }
+            return _scheduleTile(context);
+          },
+        ),
+      );
+    });
+  }
+
+  Widget _parcelTile(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: InkWell(
+        onTap: () => Get.to(() => const ParcelScreen()),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 75,
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).hintColor.withValues(alpha: .15),
+              ),
+              margin: const EdgeInsets.only(bottom: 5),
+              child: Padding(
+                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                child: Image.asset(Images.parcel),
               ),
             ),
-
-            if(Get.find<ConfigController>().config?.scheduleTripStatus ?? false)
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: InkWell(
-                onTap: () => Get.to(() => const SetDestinationScreen(rideType: RideType.scheduleRide)),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.center,children: [
-                  Container(width: 75, height: 70,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), color: Theme.of(context).hintColor.withValues(alpha:.15),
-                    ),
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: Image.asset(Images.scheduleTripIcon),
-                    ),
-                  ),
-                  Text('schedule_trip'.tr, style: textSemiBold.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha:0.8),
-                    fontSize: Dimensions.fontSizeSmall,
-                  )),
-                ]),
+            Text(
+              'parcel'.tr,
+              style: textSemiBold.copyWith(
+                color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.8),
+                fontSize: Dimensions.fontSizeSmall,
               ),
             ),
           ],
         ),
-      );
-    });
+      ),
+    );
+  }
+
+  Widget _scheduleTile(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: InkWell(
+        onTap: () => Get.to(() => const SetDestinationScreen(rideType: RideType.scheduleRide)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 75,
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).hintColor.withValues(alpha: .15),
+              ),
+              margin: const EdgeInsets.only(bottom: 5),
+              child: Padding(
+                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                child: Image.asset(Images.scheduleTripIcon),
+              ),
+            ),
+            Text(
+              'schedule_trip'.tr,
+              style: textSemiBold.copyWith(
+                color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.8),
+                fontSize: Dimensions.fontSizeSmall,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

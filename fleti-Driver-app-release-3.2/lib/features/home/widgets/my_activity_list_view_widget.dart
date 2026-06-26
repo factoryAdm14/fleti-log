@@ -6,6 +6,7 @@ import 'package:ride_sharing_user_app/localization/localization_controller.dart'
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/features/home/widgets/activity_card_widget.dart';
 import 'package:ride_sharing_user_app/features/profile/controllers/profile_controller.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/common_widgets/title_widget.dart';
 
 class MyActivityListViewWidget extends StatelessWidget {
@@ -26,7 +27,11 @@ class MyActivityListViewWidget extends StatelessWidget {
         }
         return profileController.profileInfo != null ?
         SizedBox(height: Get.find<LocalizationController>().isLtr? 80 : 85,
-            child: ListView(shrinkWrap: true, scrollDirection: Axis.horizontal, children:  [
+            child: ListView(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              cacheExtent: FletiPerformanceConfig.listCacheExtent,
+              children:  [
               MyActivityCardWidget(title: 'active',icon: Images.activeHourIcon, index: 0,value: activeSec, color: Theme.of(Get.context!).colorScheme.tertiary),
               MyActivityCardWidget(title: 'on_driving',icon: Images.onDrivingHourIcon, index: 0,value: drivingSec, color: Theme.of(Get.context!).colorScheme.secondary),
               MyActivityCardWidget(title: 'idle_time',icon: Images.idleHourIcon, index: 0,value: idleSec, color: Theme.of(Get.context!).colorScheme.tertiaryContainer),

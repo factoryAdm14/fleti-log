@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ride_sharing_user_app/helper/fleti_performance_helper.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 
 class ImageWidget extends StatelessWidget {
@@ -17,14 +20,27 @@ class ImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return svg != null ? SvgPicture.asset(
-      svg!, height: height, width: width, fit: fit,
-    ):  ClipRRect(
+    if (svg != null) {
+      return SvgPicture.asset(svg!, height: height, width: width, fit: fit);
+    }
+
+    final memW = width != null
+        ? FletiPerformanceHelper.memCachePx(context, width)
+        : FletiPerformanceConfig.defaultImageMemCachePx;
+    final memH = height != null ? FletiPerformanceHelper.memCachePx(context, height) : null;
+
+    return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: FadeInImage.assetNetwork(
-        image: image!, height: height, width: width, fit: fit,
-        placeholder: Images.placeholder,
-        imageErrorBuilder: (context, url, error) => Image.asset(placeholder, height: height, width: width, fit: fit),
+      child: CachedNetworkImage(
+        imageUrl: image!,
+        height: height,
+        width: width,
+        fit: fit,
+        memCacheWidth: memW,
+        memCacheHeight: memH,
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (context, url) => Image.asset(placeholder, height: height, width: width, fit: fit),
+        errorWidget: (context, url, error) => Image.asset(placeholder, height: height, width: width, fit: fit),
       ),
     );
   }

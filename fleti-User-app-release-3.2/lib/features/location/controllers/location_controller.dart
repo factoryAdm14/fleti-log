@@ -15,6 +15,7 @@ import 'package:ride_sharing_user_app/features/dashboard/controllers/bottom_menu
 import 'package:ride_sharing_user_app/features/home/controllers/category_controller.dart';
 import 'package:ride_sharing_user_app/features/address/domain/models/address_model.dart';
 import 'package:ride_sharing_user_app/features/map/controllers/map_controller.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/features/parcel/controllers/parcel_controller.dart';
 import 'package:ride_sharing_user_app/common_widgets/confirmation_dialog_widget.dart';
 
@@ -187,7 +188,12 @@ class LocationController extends GetxController implements GetxService {
           }
         }
 
-        _locationSubscription = Geolocator.getPositionStream().listen((newLocalData) {
+        _locationSubscription = Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            distanceFilter: FletiPerformanceConfig.locationDistanceFilterMeters,
+          ),
+        ).listen((newLocalData) {
           if (mapController != null) {
             Get.find<MapController>().updateMarkerAndCircle(latLng: LatLng(newLocalData.latitude, newLocalData.longitude));
 

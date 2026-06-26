@@ -14,6 +14,7 @@ import 'package:ride_sharing_user_app/features/splash/controllers/splash_control
 import 'package:ride_sharing_user_app/features/trip/screens/payment_received_screen.dart';
 import 'package:ride_sharing_user_app/theme/theme_controller.dart';
 import 'package:ride_sharing_user_app/util/app_constants.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
@@ -105,7 +106,12 @@ class _MapScreenState extends State<MapScreen> with WidgetsBindingObserver{
         _locationSubscription!.cancel();
       }
 
-      _locationSubscription = Geolocator.getPositionStream().listen((newLocalData) {
+      _locationSubscription = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+          distanceFilter: FletiPerformanceConfig.locationDistanceFilterMeters,
+        ),
+      ).listen((newLocalData) {
         if (_controller != null) {
           _controller!.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
               bearing: 192.8334901395799,

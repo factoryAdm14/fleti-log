@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/features/home/controllers/category_controller.dart';
 import 'package:ride_sharing_user_app/features/ride/controllers/ride_controller.dart';
 import 'package:ride_sharing_user_app/common_widgets/category_widget.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 
 class RideCategoryWidget extends StatelessWidget {
   final Function(void)? onTap;
@@ -17,6 +18,7 @@ class RideCategoryWidget extends StatelessWidget {
               categoryController.categoryList != null ?
               categoryController.categoryList!.isNotEmpty ?
               SizedBox(height: 110, width: Get.width, child: ListView.builder(
+                cacheExtent: FletiPerformanceConfig.listCacheExtent,
                 itemCount: categoryController.categoryList!.length,
                 padding: EdgeInsets.zero,
                 scrollDirection: Axis.horizontal,

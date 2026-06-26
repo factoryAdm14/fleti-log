@@ -8,6 +8,7 @@ import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/features/auth/controllers/auth_controller.dart';
 import 'package:ride_sharing_user_app/features/location/domain/models/zone_response.dart';
 import 'package:ride_sharing_user_app/features/map/controllers/map_controller.dart';
+import 'package:ride_sharing_user_app/util/fleti_performance_config.dart';
 import 'package:ride_sharing_user_app/common_widgets/confirmation_dialog_widget.dart';
 
 
@@ -54,7 +55,12 @@ class LocationController extends GetxController implements GetxService {
         if(Get.find<AuthController>().isLoggedIn()){
           updateLastLocation(location.latitude.toString(), location.longitude.toString());
         }
-        _locationSubscription = Geolocator.getPositionStream().listen((newLocalData) {
+        _locationSubscription = Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            distanceFilter: FletiPerformanceConfig.locationDistanceFilterMeters,
+          ),
+        ).listen((newLocalData) {
           if (mapController != null) {
             mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
                 bearing: 192.8334901395799,
