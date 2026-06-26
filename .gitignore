@@ -1,23 +1,35 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
+# OS
+.DS_Store
+__MACOSX/
+Thumbs.db
+
+# Secrets & local env (never commit)
+.env
+.env.*
+!.env.example
+**/backup/**/.env
+DEPLOYMENT_CREDENTIALS.local.md
+
+# Laravel
+fleti-admin-new-install-3.2/vendor/
+fleti-admin-new-install-3.2/node_modules/
+fleti-admin-new-install-3.2/storage/*.key
+fleti-admin-new-install-3.2/bootstrap/cache/*.php
+fleti-admin-new-install-3.2/public/hot
+fleti-admin-new-install-3.2/public/storage
+fleti-admin-new-install-3.2/.phpunit.result.cache
+fleti-admin-new-install-3.2/npm-debug.log
+fleti-admin-new-install-3.2/yarn-error.log
+
+# Flutter
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/build/
+**/*.iml
+**/.idea/
+
+# IDE
 .vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-files
-*.bclicense
-*.flf
-#Test results file
-TestResults.xml
+.idea/
