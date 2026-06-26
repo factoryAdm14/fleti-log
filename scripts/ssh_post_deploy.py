@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
+"""SSH post-deploy steps for Fleti production (cache, migrate, queue)."""
+
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -24,7 +27,7 @@ def parse_ssh() -> dict[str, str]:
     }
 
 
-def main() -> int:
+def run_post_deploy(*, migrate: bool = False, maintenance: bool = True) -> int:
     if not CREDS.exists():
         print(f"Missing {CREDS}", file=sys.stderr)
         return 1
@@ -41,22 +44,37 @@ def main() -> int:
     )
 
     remote_root = creds["remote_root"]
-    script = f"""set -e
-cd {remote_root}
-if ! grep -q '^SOFTWARE_VERSION=' .env 2>/dev/null; then
-  echo 'SOFTWARE_VERSION=3.2' >> .env
-  echo added SOFTWARE_VERSION
-else
-  sed -i 's/^SOFTWARE_VERSION=.*/SOFTWARE_VERSION=3.2/' .env
-  echo updated SOFTWARE_VERSION
-fi
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-mkdir -p Modules/AiModule/Resources/views
-php artisan view:cache
-grep '^SOFTWARE_VERSION=' .env
-"""
+    lines = ["set -e", f"cd {remote_root}"]
+
+    if maintenance:
+        lines.append("php artisan down --retry=60 2>/dev/null || true")
+
+    lines.extend([
+        "if ! grep -q '^SOFTWARE_VERSION=' .env 2>/dev/null; then",
+        "  echo 'SOFTWARE_VERSION=3.2' >> .env",
+        "fi",
+        "grep -q '^CORS_ALLOWED_ORIGINS=' .env || echo 'CORS_ALLOWED_ORIGINS=https://fleti.com.br,https://www.fleti.com.br' >> .env",
+    ])
+
+    if migrate:
+        lines.append("php artisan migrate --force")
+
+    lines.extend([
+        "php artisan optimize:clear",
+        "php artisan config:cache",
+        "php artisan route:cache",
+        "mkdir -p Modules/AiModule/Resources/views",
+        "php artisan view:cache",
+        "php artisan queue:restart 2>/dev/null || true",
+    ])
+
+    if maintenance:
+        lines.append("php artisan up")
+
+    lines.append("php artisan --version")
+    lines.append("grep '^SOFTWARE_VERSION=' .env")
+
+    script = "\n".join(lines) + "\n"
     stdin, stdout, stderr = client.exec_command("bash -s")
     stdin.write(script)
     stdin.channel.shutdown_write()
@@ -70,6 +88,14 @@ grep '^SOFTWARE_VERSION=' .env
     if err:
         print(err.strip(), file=sys.stderr)
     return code
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run SSH post-deploy on production")
+    parser.add_argument("--migrate", action="store_true", help="Run php artisan migrate --force")
+    parser.add_argument("--no-maintenance", action="store_true", help="Skip artisan down/up")
+    args = parser.parse_args()
+    return run_post_deploy(migrate=args.migrate, maintenance=not args.no_maintenance)
 
 
 if __name__ == "__main__":
