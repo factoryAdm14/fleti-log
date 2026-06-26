@@ -87,7 +87,7 @@
             <div class="login-right-wrap">
                 <div class="d-flex justify-content-end mt-2 me-2">
                         <span class="badge badge-success fz-12 opacity-75">
-                            {{ translate('Software_Version') }} : {{ env('SOFTWARE_VERSION') }}
+                            {{ translate('Software_Version') }} : {{ config('app.software_version') }}
                         </span>
                 </div>
                 <div class="login-right w-100 m-auto px-0 pb-{{ env('APP_MODE') == 'demo' ? '3' : '5' }}">

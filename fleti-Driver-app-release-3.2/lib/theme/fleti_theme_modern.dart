@@ -82,10 +82,10 @@ ThemeData applyFletiModernTheme(ThemeData base) {
       elevation: 0,
       scrolledUnderElevation: 0,
       backgroundColor: base.scaffoldBackgroundColor,
-      foregroundColor: Colors.white,
+      foregroundColor: isDark ? Colors.white : const Color(0xFF1D2D2B),
       centerTitle: false,
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: isDark ? Colors.white : const Color(0xFF1D2D2B),
         fontSize: 18,
         fontWeight: FontWeight.w700,
         fontFamily: 'SFProText',

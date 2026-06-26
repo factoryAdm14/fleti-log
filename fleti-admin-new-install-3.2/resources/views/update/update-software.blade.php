@@ -9,7 +9,7 @@
                         <h1 class="h3">
                             Software Update
                         </h1>
-                        @if(env('SOFTWARE_VERSION') >= 1.4)
+                        @if(config('app.software_version') >= 1.4)
                             <div class="alert alert-danger px-1 mt-2" role="alert">
                                 {{ translate("Important Notice: We've upgraded the Firebase push notification system to a new and improved version as the old one will be phased out by June 2024.
                                     Make sure your system is up-to-date to keep getting all the notification seamlessly please do check the Notification settings in the Admin panel.

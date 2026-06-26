@@ -12,6 +12,13 @@ body.fleti-admin-v4 {
   --fleti-admin-radius-sm: 0.5rem;
 }
 
+[theme="dark"] body.fleti-admin-v4 {
+  --fleti-admin-bg: #18181a;
+  --fleti-admin-surface: #232325;
+  --fleti-admin-border: rgba(255, 255, 255, 0.1);
+  --fleti-admin-muted: #969697;
+}
+
 /* ── Layout ───────────────────────────────────────────── */
 
 body.fleti-admin-v4 .main-area {
@@ -241,6 +248,40 @@ body.fleti-admin-v4 .badge {
 body.fleti-admin-v4 .badge.bg-primary {
   background: rgba(20, 177, 158, 0.15) !important;
   color: var(--bs-primary, #14b19e) !important;
+}
+
+body.fleti-admin-v4 .badge.badge-primary,
+body.fleti-admin-v4 .fleti-version-badge {
+  background-color: rgba(var(--bs-primary-rgb), 0.12) !important;
+  color: var(--bs-primary, #14b19e) !important;
+}
+
+[theme="dark"] body.fleti-admin-v4 .table thead th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--title-color, rgba(255, 255, 255, 0.9));
+}
+
+[theme="dark"] body.fleti-admin-v4 .badge.bg-warning {
+  background: rgba(230, 126, 34, 0.15) !important;
+  color: #f0a060 !important;
+}
+
+[theme="dark"] body.fleti-admin-v4 .nav--tabs .nav-link.active {
+  background: rgba(20, 177, 158, 0.18) !important;
+}
+
+[theme="dark"] body.fleti-admin-v4 .table-hover tbody tr:hover {
+  background: rgba(20, 177, 158, 0.08);
+}
+
+[theme="dark"] body.fleti-admin-v4 .search-form__input_group {
+  background: var(--fleti-admin-surface);
+}
+
+[theme="dark"] body.fleti-admin-v4 .modal-content,
+[theme="dark"] body.fleti-admin-v4 .dropdown-menu {
+  background: var(--fleti-admin-surface);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
 }
 
 body.fleti-admin-v4 .badge.bg-success {

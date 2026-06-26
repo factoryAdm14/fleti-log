@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fleti Software Version
+    |--------------------------------------------------------------------------
+    |
+    | Displayed in admin footer and login. Set SOFTWARE_VERSION in .env on
+    | production; defaults to 3.2 when missing.
+    |
+    */
+
+    'software_version' => env('SOFTWARE_VERSION', '3.2'),
+
 ];

@@ -26,7 +26,7 @@
                     </li>
                     <li>
                         <span
-                            class="badge badge-primary fs-12">{{ translate('app_version')}} <span>{{env('SOFTWARE_VERSION')}}</span></span>
+                            class="badge badge-primary fs-12 fleti-version-badge">{{ translate('app_version')}} <span>{{ config('app.software_version') }}</span></span>
                     </li>
                 </ul>
             </div>

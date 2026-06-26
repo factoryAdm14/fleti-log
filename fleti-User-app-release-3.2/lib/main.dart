@@ -61,7 +61,9 @@ class MyApp extends StatelessWidget {
               navigatorKey: Get.key,
               scrollBehavior: const MaterialScrollBehavior().copyWith(
               dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},),
-              theme: themeController.darkTheme ? darkTheme : lightTheme,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: themeController.darkTheme ? ThemeMode.dark : ThemeMode.light,
               locale: localizeController.locale,
               home: SplashScreen(notificationData: notificationData),
               translations: Messages(languages: languages),
