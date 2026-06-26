@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ride_sharing_user_app/theme/fleti_theme_modern.dart';
 
 import 'custom_theme_colors.dart';
 
-ThemeData darkTheme = ThemeData(
+ThemeData darkTheme = applyFletiModernTheme(ThemeData(
   fontFamily: 'SFProText',
   primaryColor: const Color(0xFF00735f),
   brightness: Brightness.dark,
@@ -45,4 +46,4 @@ ThemeData darkTheme = ThemeData(
       bodyMedium: TextStyle(fontWeight: FontWeight.w300, color: Color(0xffffffff)),
       bodySmall: TextStyle(fontWeight: FontWeight.w300, color: Color(0xFF1D2D2B)),
     )
-);
+));

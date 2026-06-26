@@ -51,20 +51,40 @@ const textRobotoBlack = TextStyle(
   fontWeight: FontWeight.w900,
 );
 
-List<BoxShadow>? searchBoxShadow = Get.isDarkMode ? null : [const BoxShadow(
-    offset: Offset(0,3),
-    color: Color(0x208F94FB), blurRadius: 5, spreadRadius: 2)];
+List<BoxShadow>? searchBoxShadow = Get.isDarkMode ? null : [
+  BoxShadow(
+    offset: const Offset(0, 2),
+    color: Colors.black.withValues(alpha: 0.06),
+    blurRadius: 8,
+    spreadRadius: 0,
+  ),
+];
 
+List<BoxShadow>? cardShadow = Get.isDarkMode
+    ? null
+    : [
+        BoxShadow(
+          offset: const Offset(0, 1),
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 6,
+          spreadRadius: 0,
+        ),
+      ];
 
-List<BoxShadow>? cardShadow = Get.isDarkMode? null:[BoxShadow(
-  offset: const Offset(1, 0),
-  blurRadius: 1,spreadRadius: 1,
-  color: Colors.black.withValues(alpha: 0.5),
-)];
-
-
-List<BoxShadow>? shadow = Get.isDarkMode ? [BoxShadow(
-    offset: const Offset(0,3),
-    color: Colors.grey[100]!, blurRadius: 1, spreadRadius: 2)] : [BoxShadow(
-    offset: const Offset(0,3),
-    color: Colors.grey[100]!, blurRadius: 1, spreadRadius: 2)];
+List<BoxShadow>? shadow = Get.isDarkMode
+    ? [
+        BoxShadow(
+          offset: const Offset(0, 2),
+          color: Colors.black.withValues(alpha: 0.2),
+          blurRadius: 6,
+          spreadRadius: 0,
+        ),
+      ]
+    : [
+        BoxShadow(
+          offset: const Offset(0, 2),
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 6,
+          spreadRadius: 0,
+        ),
+      ];

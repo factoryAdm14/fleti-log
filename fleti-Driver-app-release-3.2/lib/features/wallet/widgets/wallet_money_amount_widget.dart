@@ -11,6 +11,7 @@ import 'package:ride_sharing_user_app/features/profile/controllers/profile_contr
 import 'package:ride_sharing_user_app/features/splash/controllers/splash_controller.dart';
 import 'package:ride_sharing_user_app/features/wallet/controllers/wallet_controller.dart';
 import 'package:ride_sharing_user_app/features/wallet/widgets/withdraw_bottom_sheet_widget.dart';
+import 'package:ride_sharing_user_app/theme/fleti_modern_decorations.dart';
 
 class WalletMoneyAmountWidget extends StatelessWidget {
   const  WalletMoneyAmountWidget({super.key,});
@@ -62,10 +63,7 @@ class WalletMoneyAmountWidget extends StatelessWidget {
                 }
               },
               child: Container(width: Get.width,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).hintColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall)
-                ),
+                decoration: FletiModernDecorations.card(context, radius: Dimensions.radiusDefault),
                 padding: const EdgeInsets.all(Dimensions.paddingSize),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(
@@ -91,10 +89,7 @@ class WalletMoneyAmountWidget extends StatelessWidget {
                   const SizedBox(height: Dimensions.paddingSizeSmall),
 
                   Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall)
-                    ),
+                    decoration: FletiModernDecorations.card(context, radius: Dimensions.radiusSmall),
                     padding: const EdgeInsets.all(Dimensions.paddingSize),
                     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Row(children: [

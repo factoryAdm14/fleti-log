@@ -7,6 +7,7 @@ import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/util/styles.dart';
 import 'package:ride_sharing_user_app/features/wallet/controllers/wallet_controller.dart';
 import 'package:ride_sharing_user_app/features/wallet/domain/models/transaction_model.dart';
+import 'package:ride_sharing_user_app/theme/fleti_modern_decorations.dart';
 import 'package:ride_sharing_user_app/common_widgets/divider_widget.dart';
 
 class TransactionCardWidget extends StatelessWidget {
@@ -21,8 +22,9 @@ class TransactionCardWidget extends StatelessWidget {
         builder: (walletController) {
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
+              Container(
+                decoration: FletiModernDecorations.card(context, radius: Dimensions.radiusDefault),
+                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                 child: Row(children: [
                   Expanded(child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +57,8 @@ class TransactionCardWidget extends StatelessWidget {
                       style: textRobotoBold.copyWith(
                           color: transaction.debit!>0?
                           Theme.of(context).colorScheme.error:
-                          Theme.of(context).primaryColor)))
+                          Theme.of(context).primaryColor)),
+                  ),
                 ],),
               ),
               DividerWidget(height: .5,color: Theme.of(context).hintColor.withValues(alpha: .75),)
