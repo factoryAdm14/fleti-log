@@ -434,7 +434,7 @@ We may release future updates, so it will overwrite this file. it's better and s
     function themeSwitcher(className, themeName) {
         $(className).on("click", function () {
             setActiveSettingBox(this, ".setting-box.light-mode, .setting-box.dark-mode");
-            $("body").attr("theme", themeName);
+            $("html, body").attr("theme", themeName);
             localStorage.setItem("theme", themeName);
         });
     }

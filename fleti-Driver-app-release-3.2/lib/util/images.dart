@@ -3,8 +3,8 @@ class Images {
   static const String splashLogo = 'assets/image/splash_logo.png';
   static const String signUpScreenLogo = 'assets/image/sign_up_logo.png';
   static const String forgotPasswordLogo = 'assets/image/forgot_password.png';
-  static const String saudi = 'assets/image/saudi.png';
   static const String unitedKingdom = 'assets/image/united_kingdom.png';
+  static const String brazil = 'assets/image/brazil.png';
   static const String placeholder = 'assets/image/placeholder.jpg';
   static const String personPlaceholder = 'assets/image/person_placeholder.png';
   static const String lock = 'assets/image/lock.png';

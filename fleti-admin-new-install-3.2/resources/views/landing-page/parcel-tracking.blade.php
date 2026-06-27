@@ -216,7 +216,7 @@
                                          alt="">
                                     {{translate("Payment By")}} {{ucwords($trip?->parcel?->payer)}}
                                 </span>
-                                <span class="text-base-dark">{{$trip->payment_method}}</span>
+                                <span class="text-base-dark">{{ translate($trip->payment_method) }}</span>
                             </li>
                         </ul>
                     </div>

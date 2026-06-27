@@ -54,7 +54,21 @@ class UserRegisterApiRequest extends FormRequest
             $rules['gender'] = 'required|in:' . implode(',', GENDERS);
         }
 
-        return $rules;
+        return array_merge($rules, $this->legalConsentRules());
+    }
+
+    protected function legalConsentRules(): array
+    {
+        if (!legalConsentRequired()) {
+            return [];
+        }
+
+        return [
+            'terms_accepted' => 'required|accepted',
+            'privacy_accepted' => 'required|accepted',
+            'location_consent_accepted' => 'required|accepted',
+            'marketing_consent_accepted' => 'sometimes',
+        ];
     }
 
     /**
@@ -69,11 +83,17 @@ class UserRegisterApiRequest extends FormRequest
 
     public function messages()
     {
-        return [
+        return array_merge([
             'profile_image.max' => translate(key: 'The Profile Image must be less than {maxSize}', replace: ['maxSize' => readableUploadMaxFileSize('image')]),
             'identity_images.*.max' => translate(key: 'Each Identity Image must be less than {maxSize}', replace: ['maxSize' => readableUploadMaxFileSize('image')]),
             'other_documents.*.max' => translate(key: 'Each document must be less than {maxSize}', replace: ['maxSize' => readableUploadMaxFileSize('image')]),
-        ];
+            'terms_accepted.required' => translate('You must accept the terms of use'),
+            'terms_accepted.accepted' => translate('You must accept the terms of use'),
+            'privacy_accepted.required' => translate('You must accept the privacy policy'),
+            'privacy_accepted.accepted' => translate('You must accept the privacy policy'),
+            'location_consent_accepted.required' => translate('You must authorize location usage'),
+            'location_consent_accepted.accepted' => translate('You must authorize location usage'),
+        ], []);
     }
 
     protected function prepareForValidation()

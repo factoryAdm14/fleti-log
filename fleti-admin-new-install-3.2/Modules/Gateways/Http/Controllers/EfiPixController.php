@@ -11,6 +11,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use Modules\Gateways\Entities\PaymentRequest;
 use Modules\Gateways\Services\EfiPixService;
+use Modules\FinanceManagement\Service\PaymentGatewayManager;
 use Modules\Gateways\Traits\Processor;
 
 class EfiPixController extends Controller
@@ -20,6 +21,7 @@ class EfiPixController extends Controller
     public function __construct(
         private readonly PaymentRequest $paymentRequest,
         private readonly EfiPixService $pixService,
+        private readonly PaymentGatewayManager $gatewayManager,
     ) {
     }
 
@@ -108,12 +110,11 @@ class EfiPixController extends Controller
 
     public function webhook(Request $request): JsonResponse
     {
-        $config = $this->pixService->resolveConfig();
-        if (!$config) {
+        $result = $this->gatewayManager->handlePixWebhook($request, 'efi_pix');
+
+        if (!$result->accepted) {
             return response()->json(['ok' => false], 503);
         }
-
-        $this->pixService->processWebhookPayload($request->all(), $config);
 
         return response()->json(['ok' => true]);
     }

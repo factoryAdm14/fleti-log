@@ -3,11 +3,13 @@
 $(function () {
 
     function initDateRangePicker($element) {
-        const placeholder = $element.attr('placeholder') || 'Select Date';
+        const picker = window.FletiDatePicker || {};
+        const labels = picker.getLabels ? picker.getLabels() : {};
+        const placeholder = $element.attr('placeholder') || labels.selectDate || 'Select Date';
         let lastValue = $element.val();
 
         $element.daterangepicker({
-            ranges: {
+            ranges: picker.getRanges ? picker.getRanges() : {
                 'Today': [moment(), moment()],
                 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
@@ -21,12 +23,16 @@ $(function () {
             showCustomRangeLabel: true,
             autoUpdateInput: false,
             drops: 'auto',
-            locale: { cancelLabel: 'Clear' },
+            locale: picker.getLocaleOptions ? picker.getLocaleOptions({ cancelLabel: labels.cancel || 'Clear' }) : { cancelLabel: 'Clear' },
             alwaysShowCalendars: true
         });
 
-        $element.on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(`${picker.startDate.format('MM/DD/YYYY')} - ${picker.endDate.format('MM/DD/YYYY')}`);
+        $element.on('apply.daterangepicker', function (ev, pickerInstance) {
+            $(this).val(
+                picker.formatRange
+                    ? picker.formatRange(pickerInstance.startDate, pickerInstance.endDate)
+                    : `${pickerInstance.startDate.format('MM/DD/YYYY')} - ${pickerInstance.endDate.format('MM/DD/YYYY')}`
+            );
             lastValue = $(this).val();
         });
 

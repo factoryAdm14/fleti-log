@@ -11,6 +11,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use Modules\Gateways\Entities\PaymentRequest;
 use Modules\Gateways\Services\MercadoPagoPixService;
+use Modules\FinanceManagement\Service\PaymentGatewayManager;
 use Modules\Gateways\Traits\Processor;
 
 class MercadoPagoPixController extends Controller
@@ -20,6 +21,7 @@ class MercadoPagoPixController extends Controller
     public function __construct(
         private readonly PaymentRequest $paymentRequest,
         private readonly MercadoPagoPixService $pixService,
+        private readonly PaymentGatewayManager $gatewayManager,
     ) {
     }
 
@@ -108,24 +110,13 @@ class MercadoPagoPixController extends Controller
 
     public function webhook(Request $request): JsonResponse
     {
-        $config = $this->pixService->resolveConfig();
-        if (!$config) {
-            return response()->json(['ok' => false], 503);
+        $result = $this->gatewayManager->handlePixWebhook($request, 'mercadopago_pix');
+
+        if (!$result->accepted) {
+            $status = $result->message === 'Assinatura inválida' ? 401 : 503;
+
+            return response()->json(['ok' => false], $status);
         }
-
-        $dataId = (string) ($request->input('data.id') ?? $request->input('id') ?? '');
-        $secret = $config->webhook_secret ?? null;
-
-        if (!$this->pixService->verifyWebhookSignature(
-            $request->header('x-signature'),
-            $request->header('x-request-id'),
-            $dataId,
-            $secret
-        )) {
-            return response()->json(['ok' => false], 401);
-        }
-
-        $this->pixService->processWebhookPayload($request->all(), $config);
 
         return response()->json(['ok' => true]);
     }

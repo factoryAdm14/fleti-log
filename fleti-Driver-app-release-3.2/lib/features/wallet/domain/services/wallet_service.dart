@@ -28,8 +28,8 @@ class WalletService implements WalletServiceInterface{
   }
 
   @override
-  Future withdrawBalance(List<String> typeKey, List<String> typeValue, int id, String balance, String note) {
-   return walletRepositoryInterface.withdrawBalance(typeKey, typeValue, id, balance, note);
+  Future withdrawBalance(List<String> typeKey, List<String> typeValue, int id, String balance, String note, {String? methodInfoId}) {
+   return walletRepositoryInterface.withdrawBalance(typeKey, typeValue, id, balance, note, methodInfoId: methodInfoId);
   }
 
   @override

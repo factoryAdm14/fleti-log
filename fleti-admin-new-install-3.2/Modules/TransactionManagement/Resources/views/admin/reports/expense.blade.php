@@ -8,14 +8,7 @@
         <div class="container-fluid">
             <h4 class="text-capitalize mb-3">{{ translate('Report Analytics') }}</h4>
             <div class="d-flex mb-3">
-                <ul class="nav nav--tabs p-1 rounded bg-white" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a href="{{route('admin.report.earning')}}" class="nav-link">Earning</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="{{route('admin.report.expense')}}" class="nav-link active">Expense</a>
-                    </li>
-                </ul>
+                @include('transactionmanagement::admin.reports.partials._report-tabs', ['active' => 'expense'])
             </div>
             <div class="mb-4 row g-4">
                 <div class="col-lg-6 col-xl-6 col-xxl-5">

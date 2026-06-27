@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-@php($preloader = getSession('preloader'))
+<html lang="{{ defaultLang() }}" dir="{{ session()->get('direction') ?? 'ltr' }}">
 @php($favicon = getSession('favicon'))
 <head>
     <meta charset="UTF-8"/>
@@ -16,6 +15,7 @@
     <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/landing-page/assets/css/odometer.css') }}"/>
     <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/landing-page/assets/css/owl.min.css') }}"/>
     <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/landing-page/assets/css/main.css') }}"/>
+    <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/landing-page/assets/css/fleti-landing.css') }}"/>
     <link rel="stylesheet" href="{{ dynamicAsset('public/assets/admin-module/css/toastr.css') }}"/>
     @include('landing-page.layouts.css')
     <link rel="shortcut icon"
@@ -23,26 +23,14 @@
           type="image/x-icon"/>
 </head>
 
-<body>
-
-<div class="preloader" id="preloader">
-    @if ($preloader)
-        <img class="preloader-img" width="160" loading="eager"
-             src="{{ $preloader ? dynamicStorage(path: 'storage/app/public/business/' . $preloader) : '' }}" alt="">
-    @else
-        <div class="spinner-grow" role="status">
-            <span class="visually-hidden">{{ translate('Loading...') }}</span>
-        </div>
-    @endif
-</div>
+<body class="fleti-landing-page">
 
 @include('landing-page.partials._header')
 
 @yield('content')
 
-<!-- Footer Section Start -->
 @include('landing-page.partials._footer')
-<!-- Footer Section End -->
+
 <script src="{{ dynamicAsset(path: 'public/landing-page/assets/js/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ dynamicAsset(path: 'public/landing-page/assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ dynamicAsset(path: 'public/landing-page/assets/js/viewport.jquery.js') }}"></script>
@@ -50,6 +38,11 @@
 <script src="{{ dynamicAsset(path: 'public/landing-page/assets/js/owl.min.js') }}"></script>
 <script src="{{ dynamicAsset(path: 'public/landing-page/assets/js/main.js') }}"></script>
 <script src="{{ dynamicAsset('public/assets/admin-module/js/toastr.js') }}"></script>
+<script>
+    document.getElementById('fletiNavToggle')?.addEventListener('click', function () {
+        document.getElementById('fletiNavMenu')?.classList.toggle('is-open');
+    });
+</script>
 
 {!! Toastr::message() !!}
 @if ($errors->any())
@@ -65,5 +58,4 @@
 @endif
 @stack('script')
 </body>
-
 </html>

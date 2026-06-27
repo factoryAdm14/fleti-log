@@ -76,13 +76,13 @@
                                             <td class="text-center">
                                                 {{ $transaction?->user?->first_name . ' ' . $transaction?->user?->last_name }}
                                                 <small class="opacity-75 d-block">
-                                                    {{ ucwords(str_replace('_', ' ', $transaction->account) )}} {{ $transaction->transaction_type != null ? '(' . ucwords($transaction->transaction_type) .')' : ""}}
+                                                    {{ translate($transaction->account) }}{{ $transaction->transaction_type != null ? ' (' . translate($transaction->transaction_type) . ')' : '' }}
                                                 </small>
                                             </td>
                                             <td class="text-center">{{getCurrencyFormat($transaction->credit)}}</td>
                                             <td class="text-center">{{getCurrencyFormat($transaction->debit)}}</td>
                                             <td class="text-center">{{getCurrencyFormat($transaction->balance)}}</td>
-                                            <td class="text-center">{{ $transaction->trx_type ?? 'N/A' }}</td>
+                                            <td class="text-center">{{ transactionTrxTypeLabel($transaction->trx_type) }}</td>
                                         </tr>
                                     @empty
                                         <tr>

@@ -12,6 +12,10 @@ Route::group(['prefix' => 'customer'], function () {
             Route::put('send-message', 'sendMessage');
             Route::get('conversation', 'conversation');
             Route::get('channel-list', 'channelList');
+            Route::put('create-channel-with-admin', 'createChannelWithAdmin');
+            Route::put('send-message-to-admin', 'sendMessageToAdminFromCustomer');
+            Route::put('send-predefined-question-to-admin', 'sendPredefinedQuestionToAdminFromCustomer');
+            Route::put('submit-service-request', 'submitServiceRequestFromCustomer');
         });
     });
 });

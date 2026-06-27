@@ -29,6 +29,10 @@ class LandingPageController extends Controller
 
     public function index(): Factory|View|Application
     {
+        $locale = defaultLang();
+        app()->setLocale($locale);
+        session()->put('locale', $locale);
+
         $businessName = businessConfig(key: 'business_name', settingsType: BUSINESS_INFORMATION)?->value ?? null;
 
         //APP LINK
@@ -128,6 +132,18 @@ class LandingPageController extends Controller
     {
         $data = $this->businessSetting->findOneBy(criteria: ['key_name' => 'terms_and_conditions', 'settings_type' => PAGES_SETTINGS]);
         return view('landing-page.terms', compact('data'));
+    }
+
+    public function legal()
+    {
+        $data = $this->businessSetting->findOneBy(criteria: ['key_name' => 'legal', 'settings_type' => PAGES_SETTINGS]);
+        return view('landing-page.legal', compact('data'));
+    }
+
+    public function refundPolicy()
+    {
+        $data = $this->businessSetting->findOneBy(criteria: ['key_name' => 'refund_policy', 'settings_type' => PAGES_SETTINGS]);
+        return view('landing-page.refund', compact('data'));
     }
 
     public function blogList()

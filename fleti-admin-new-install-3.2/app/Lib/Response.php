@@ -342,6 +342,11 @@ const CUSTOMER_FUND_STORE_200 = [
     'message' => 'Successfully added'
 ];
 
+const DRIVER_FUND_STORE_200 = [
+    'response_code' => 'driver_fund_store_200',
+    'message' => 'Successfully added to driver withdrawable balance'
+];
+
 
 // Vehicle Brand
 

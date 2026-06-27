@@ -1,11 +1,73 @@
 @push('css_or_js')
     <style>
-        #map-layer {
-            max-width: 706px;
-            min-height: 230px;
+        #trip-map-inline,
+        #trip-map-layer {
+            width: 100%;
+        }
+
+        #trip-map-inline {
+            min-height: 240px;
+        }
+
+        #trip-map-layer {
+            min-height: 520px;
+        }
+
+        .trip-map-preview {
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+        }
+
+        .trip-map-preview__overlay {
+            position: absolute;
+            inset: auto 0 0 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 35%);
+            color: #334155;
+            font-size: 12px;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .trip-map-legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .trip-map-legend__dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .trip-map-legend__dot--pickup {
+            background: #14b19e;
+        }
+
+        .trip-map-legend__dot--destination {
+            background: #ef4444;
+        }
+
+        .trip-map-legend__line {
+            width: 18px;
+            height: 3px;
+            border-radius: 999px;
+            display: inline-block;
+            margin-right: 4px;
+            background: #4285F4;
+            vertical-align: middle;
         }
     </style>
-
 @endpush
 <div class="col-lg-4">
     @if(count($safetyAlerts) > 0)
@@ -126,32 +188,71 @@
     @endif
     <div class="card">
         <div class="card-body">
-            <h5 class="text-center mb-3 text-capitalize">{{translate('trip_status')}}</h5>
+            @php
+                $displayTripStatus = ($trip->current_status == PENDING && $trip->ride_request_type == SCHEDULED)
+                    ? SCHEDULED
+                    : ($trip->current_status ?? '—');
+                $displayPaymentStatus = $trip->payment_status ?? '—';
+                $tripDistance = $trip->current_status == 'completed'
+                    ? ($trip->actual_distance ?? $trip->estimated_distance)
+                    : ($trip->estimated_distance ?? $trip->actual_distance);
+                $pickupCoordinates = $trip->coordinate?->pickup_coordinates;
+                $destinationCoordinates = $trip->coordinate?->destination_coordinates;
+                $hasMapCoords = $pickupCoordinates && $destinationCoordinates;
+                $mapApiKey = businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null;
+                $encodedPolyline = $routePolyline ?? $trip->encoded_polyline;
+            @endphp
+            <h5 class="text-center mb-3 text-capitalize">{{ translate('Trip Details') }}</h5>
 
             <div class="mb-3">
-                <label for="trip_status" class="mb-2">{{translate('trip_status')}}</label>
-                <select name="trip_status" id="trip_status" class="js-select cmn_focus" disabled>
-                    <option selected>{{translate($trip->current_status == PENDING && $trip->ride_request_type == SCHEDULED ? SCHEDULED : $trip->current_status)}}</option>
-                </select>
+                <label class="mb-2 d-block">{{ translate('trip_status') }}</label>
+                <div class="form-control bg-light text-capitalize">{{ translate($displayTripStatus) }}</div>
             </div>
 
             <div class="mb-4">
-                <label for="payment_status" class="mb-2">{{translate('payment_status')}}</label>
-                <select name="payment_status" id="payment_status" class="js-select cmn_focus" disabled>
-                    <option selected>{{translate($trip->payment_status)}}</option>
-                </select>
+                <label class="mb-2 d-block">{{ translate('payment_status') }}</label>
+                <div class="form-control bg-light text-capitalize">{{ translate($displayPaymentStatus) }}</div>
             </div>
+            @if($hasMapCoords && $mapApiKey)
             <div class="mb-4">
-                <div class="map-wrapper rounded-10 overflow-hidden" id="mapWrapper">
+                <label class="mb-2 d-block">{{ translate('view_in_map') }}</label>
+                <div class="trip-map-preview position-relative rounded-10 overflow-hidden mb-2"
+                     data-bs-toggle="modal"
+                     data-bs-target="#tripMapModal"
+                     title="{{ translate('view_in_map') }}">
+                    <div id="trip-map-inline"></div>
+                    <div class="trip-map-preview__overlay">
+                        <i class="bi bi-arrows-fullscreen"></i>
+                        {{ translate('click_to_expand_map') }}
+                    </div>
+                </div>
+                <div class="trip-map-legend mb-2">
+                    <span><span class="trip-map-legend__dot trip-map-legend__dot--pickup"></span>{{ translate('pickup') }}</span>
+                    <span><span class="trip-map-legend__dot trip-map-legend__dot--destination"></span>{{ translate('destination') }}</span>
+                    <span><span class="trip-map-legend__line"></span>{{ translate('route') }}</span>
+                </div>
+                <button type="button"
+                        class="btn btn-outline-primary w-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#tripMapModal">
+                    <i class="bi bi-map"></i> {{ translate('view_in_map') }}
+                </button>
+            </div>
 
-                    <div class="map-overlay" id="mapOverlay"></div>
-                    <div id="map-layer" class="rounded-10 overflow-hidden"></div>
-                    <button id="mapToggleBtn" class="map-toggle-btn">
-                        View In Map
-                    </button>
-
+            <div class="modal fade" id="tripMapModal" tabindex="-1" aria-labelledby="tripMapModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="tripMapModalLabel">{{ translate('view_in_map') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <div id="trip-map-layer"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            @endif
 
             <div>
                 <ul class="list-icon">
@@ -159,7 +260,7 @@
                         <div class="media gap-2">
                             <img width="18" src="{{dynamicAsset('public/assets/admin-module/img/svg/gps.svg')}}" class="svg"
                                  alt="">
-                            <div class="media-body">{{$trip->coordinate->pickup_address}}</div>
+                            <div class="media-body">{{ $trip->coordinate?->pickup_address ?? '—' }}</div>
                         </div>
                     </li>
                     <li>
@@ -167,7 +268,7 @@
                             <img width="18" src="{{dynamicAsset('public/assets/admin-module/img/svg/map-nav.svg')}}"
                                  class="svg" alt="">
                             <div class="media-body">
-                                <div>{{$trip->coordinate->destination_address}}</div>
+                                <div>{{ $trip->coordinate?->destination_address ?? '—' }}</div>
                                 @if($trip->entrance)
                                     <a href="#" class="text-primary d-flex">{{$trip->entrance}}</a>
 
@@ -179,13 +280,14 @@
                         <div class="media gap-2">
                             <img width="18" src="{{dynamicAsset('public/assets/admin-module/img/svg/distance.svg')}}"
                                  class="svg" alt="">
-                            @if($trip->current_status == 'completed')
-                                <div class="media-body text-capitalize">{{translate('total_distance')}}
-                                    - {{$trip->actual_distance}} {{translate('km')}}</div>
-                            @else
-                                <div class="media-body text-capitalize">{{translate('total_distance')}}
-                                    - {{$trip->estimated_distance}} {{translate('km')}}</div>
-                            @endif
+                            <div class="media-body text-capitalize">
+                                {{ translate('total_distance') }}
+                                @if(filled($tripDistance))
+                                    - {{ $tripDistance }} {{ translate('km') }}
+                                @else
+                                    - {{ translate('unavailable') }}
+                                @endif
+                            </div>
                         </div>
                     </li>
                     @if($trip->pickup_note)
@@ -309,65 +411,211 @@
 </div>
 
 @push('script')
+    @if($hasMapCoords && $mapApiKey)
     <script>
-        let map;
-        let waypoints;
+        (function () {
+            const pickup = {
+                lat: {{ $pickupCoordinates->latitude }},
+                lng: {{ $pickupCoordinates->longitude }}
+            };
+            const destination = {
+                lat: {{ $destinationCoordinates->latitude }},
+                lng: {{ $destinationCoordinates->longitude }}
+            };
+            const encodedPolyline = @json($encodedPolyline);
+            const tripMaps = {};
+            let mapsScriptRequested = false;
 
-        function initMap() {
-            const mapLayer = document.getElementById("map-layer");
-            const defaultOptions = {zoom: 9};
-            map = new google.maps.Map(mapLayer, defaultOptions);
+            function markerIcon(color) {
+                return {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 2,
+                    scale: 9
+                };
+            }
 
-            const directionsService = new google.maps.DirectionsService;
-            const directionsDisplay = new google.maps.DirectionsRenderer;
-            directionsDisplay.setMap(map);
+            function fitMapToPoints(map, points) {
+                if (!map || !points.length) {
+                    return;
+                }
 
-            const start = ({
-                lat: {{$trip->coordinate->pickup_coordinates->latitude}},
-                lng: {{$trip->coordinate->pickup_coordinates->longitude}}
-            });
-            const end = ({
-                lat: {{$trip->coordinate->destination_coordinates->latitude}},
-                lng: {{$trip->coordinate->destination_coordinates->longitude}}
-            });
-            drawPath(directionsService, directionsDisplay, start, end);
-        }
+                const bounds = new google.maps.LatLngBounds();
+                points.forEach(function (point) {
+                    bounds.extend(point);
+                });
+                map.fitBounds(bounds);
 
-        function drawPath(directionsService, directionsDisplay, start, end) {
-
-            directionsService.route({
-                    origin: start,
-                    destination: end,
-                    travelMode: "DRIVING"
-                },
-                function (response, status) {
-                    if (status === 'OK') {
-                        directionsDisplay.setDirections(response);
-                    } else {
-                        toastr.error('{{translate('problem_in_showing_direction._status:_')}}' + status);
+                google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
+                    if (map.getZoom() > 16) {
+                        map.setZoom(16);
                     }
                 });
-        }
+            }
 
-        const wrapper = document.getElementById("mapWrapper");
-const btn = document.getElementById("mapToggleBtn");
-const overlay = document.getElementById("mapOverlay");
+            function addTripMarkers(map) {
+                new google.maps.Marker({
+                    position: pickup,
+                    map: map,
+                    title: @json($trip->coordinate?->pickup_address ?? translate('pickup')),
+                    icon: markerIcon('#14b19e'),
+                    zIndex: 2
+                });
+                new google.maps.Marker({
+                    position: destination,
+                    map: map,
+                    title: @json($trip->coordinate?->destination_address ?? translate('destination')),
+                    icon: markerIcon('#ef4444'),
+                    zIndex: 2
+                });
+            }
 
-btn.addEventListener("click", () => {
+            function drawStraightRoute(map) {
+                const path = [pickup, destination];
+                new google.maps.Polyline({
+                    path: path,
+                    geodesic: true,
+                    strokeColor: '#4285F4',
+                    strokeOpacity: 0.85,
+                    strokeWeight: 4,
+                    map: map,
+                    zIndex: 1
+                });
+                fitMapToPoints(map, path);
+            }
 
-    // Google Map fullscreen button find
-    const fullscreenBtn = document.querySelector(".gm-fullscreen-control");
+            function drawEncodedRoute(map) {
+                const path = google.maps.geometry.encoding.decodePath(encodedPolyline);
+                if (!path.length) {
+                    drawStraightRoute(map);
+                    return;
+                }
 
-    if (fullscreenBtn) {
-        fullscreenBtn.click(); // default fullscreen trigger
-    }
+                new google.maps.Polyline({
+                    path: path,
+                    geodesic: true,
+                    strokeColor: '#4285F4',
+                    strokeOpacity: 0.95,
+                    strokeWeight: 5,
+                    map: map,
+                    zIndex: 1
+                });
+                fitMapToPoints(map, path);
+            }
 
-});
+            function drawTripRoute(map) {
+                if (encodedPolyline) {
+                    drawEncodedRoute(map);
+                    return;
+                }
 
+                drawStraightRoute(map);
+            }
+
+            function renderTripMap(layerId, options) {
+                const mapLayer = document.getElementById(layerId);
+                if (!mapLayer || !window.google?.maps) {
+                    return null;
+                }
+
+                const settings = Object.assign({
+                    compact: false,
+                    gestureHandling: 'greedy'
+                }, options || {});
+
+                mapLayer.innerHTML = '';
+                const map = new google.maps.Map(mapLayer, {
+                    zoom: 13,
+                    center: pickup,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: !settings.compact,
+                    fullscreenControl: !settings.compact,
+                    streetViewControl: !settings.compact,
+                    zoomControl: true,
+                    gestureHandling: settings.gestureHandling,
+                    disableDefaultUI: settings.compact
+                });
+
+                addTripMarkers(map);
+                drawTripRoute(map);
+                tripMaps[layerId] = map;
+
+                return map;
+            }
+
+            function resizeTripMap(layerId) {
+                const map = tripMaps[layerId];
+                if (!map) {
+                    return;
+                }
+
+                google.maps.event.trigger(map, 'resize');
+
+                if (encodedPolyline) {
+                    const path = google.maps.geometry.encoding.decodePath(encodedPolyline);
+                    fitMapToPoints(map, path.length ? path : [pickup, destination]);
+                    return;
+                }
+
+                fitMapToPoints(map, [pickup, destination]);
+            }
+
+            function loadGoogleMaps(callback) {
+                if (window.google?.maps?.geometry) {
+                    callback();
+                    return;
+                }
+
+                if (mapsScriptRequested) {
+                    const waitForMaps = setInterval(function () {
+                        if (window.google?.maps?.geometry) {
+                            clearInterval(waitForMaps);
+                            callback();
+                        }
+                    }, 100);
+                    return;
+                }
+
+                mapsScriptRequested = true;
+                window.initTripDetailsMap = callback;
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key={{ $mapApiKey }}&libraries=geometry&callback=initTripDetailsMap';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+
+            function initInlineTripMap() {
+                renderTripMap('trip-map-inline', {
+                    compact: true,
+                    gestureHandling: 'none'
+                });
+            }
+
+            function openTripMapModal() {
+                renderTripMap('trip-map-layer', {
+                    compact: false,
+                    gestureHandling: 'greedy'
+                });
+
+                setTimeout(function () {
+                    resizeTripMap('trip-map-layer');
+                }, 250);
+            }
+
+            loadGoogleMaps(function () {
+                initInlineTripMap();
+
+                const tripMapModal = document.getElementById('tripMapModal');
+                if (tripMapModal) {
+                    tripMapModal.addEventListener('shown.bs.modal', openTripMapModal);
+                }
+            });
+        })();
     </script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key={{businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null}}&callback=initMap">
-    </script>
+    @endif
 
     <script>
         $(document).ready(function () {

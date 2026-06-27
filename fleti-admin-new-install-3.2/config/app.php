@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'pt'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
@@ -134,5 +134,11 @@ return [
     */
 
     'software_version' => env('SOFTWARE_VERSION', '3.2'),
+
+    'app_mode' => env('APP_MODE', 'live'),
+
+    'buyer_username' => env('BUYER_USERNAME'),
+
+    'purchase_code' => env('PURCHASE_CODE'),
 
 ];

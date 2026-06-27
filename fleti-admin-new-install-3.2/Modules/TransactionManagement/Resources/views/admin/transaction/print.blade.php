@@ -51,7 +51,7 @@
                 <td>{{$d['transaction_to']}}</td>
                 <td>{{$d['credit']}}</td>
                 <td>{{$d['balance']}}</td>
-                <td>{{$d['trx_type'] ?? 'N/A'}}</td>
+                <td>{{ transactionTrxTypeLabel($d['trx_type'] ?? null) }}</td>
             </tr>
         @endforeach
 

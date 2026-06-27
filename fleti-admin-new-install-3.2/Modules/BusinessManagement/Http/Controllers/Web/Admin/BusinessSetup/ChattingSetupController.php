@@ -40,11 +40,12 @@ class ChattingSetupController extends BaseController
     public function index(?Request $request, string $type = null): View|Collection|LengthAwarePaginator|null|callable|RedirectResponse
     {
         $this->authorize('business_view');
-        if (in_array($type, [DRIVER, SUPPORT])) {
+        if (in_array($type, [DRIVER, CUSTOMER, SUPPORT])) {
             $settings = $this->businessSettingService->getBy(criteria: ['settings_type' => CHATTING_SETTINGS]);
-            $redefinedQAs = $this->questionAnswerService->getBy(orderBy: ['created_at' => 'desc'], limit: paginationLimit(), offset: $request?->page ?? 1);
+            $qaCriteria = in_array($type, [DRIVER, CUSTOMER]) ? ['question_answer_for' => $type] : [];
+            $redefinedQAs = $this->questionAnswerService->getBy(criteria: $qaCriteria, orderBy: ['created_at' => 'desc'], limit: paginationLimit(), offset: $request?->page ?? 1);
             $savedReplies = $this->supportSavedReplyService->getBy(orderBy: ['created_at' => 'desc'], limit: paginationLimit(), offset: $request?->page ?? 1);
-            return view('businessmanagement::admin.business-setup.chatting-setup', compact('settings', 'redefinedQAs', 'savedReplies'));
+            return view('businessmanagement::admin.business-setup.chatting-setup', compact('settings', 'redefinedQAs', 'savedReplies', 'type'));
         }
         abort(404);
 

@@ -1428,4 +1428,23 @@ trait TransactionTrait
         return true;
     }
 
+    public function addDriverFundByAdmin($driverAccount, array $data, string $attribute = 'driver_fund_by_admin'): bool
+    {
+        Transaction::create([
+            'id' => Str::uuid(),
+            'balance' => $driverAccount->receivable_balance,
+            'attribute' => $attribute,
+            'account' => 'receivable_balance',
+            'credit' => $data['amount'],
+            'added_bonus' => 0,
+            'user_id' => $driverAccount->user_id,
+            'reference' => $data['reference'] ?? null,
+            'trx_type' => 'Amount added to driver withdrawable balance by admin',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return true;
+    }
+
 }

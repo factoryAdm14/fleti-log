@@ -97,6 +97,9 @@ class NotificationController extends BaseController
                 $status = array_key_exists('status', $notification) ? 1 : 0;
                 $notification['status'] = $status;
                 $firebaseNotification = $this->firebasePushNotificationService->findOneBy(criteria: ['group' => $notification['group'], 'name' => $notification['name'], 'type' => convertToSnakeCaseIfNeeded($type)]);
+                if ($firebaseNotification) {
+                    $notification['value'] = pushNotificationNormalizeSubmittedValue($firebaseNotification, (string) ($notification['value'] ?? ''));
+                }
                 $this->firebasePushNotificationService->update(id: $firebaseNotification?->id, data: $notification);
             }
             $notifications = $this->firebasePushNotificationService->getBy(criteria: ['type' => convertToSnakeCaseIfNeeded($type)])->groupBy('group');

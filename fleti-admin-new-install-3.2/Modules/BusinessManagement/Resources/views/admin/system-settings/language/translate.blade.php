@@ -70,14 +70,14 @@
                                         </td>
                                         <td>
                                             <button type="button" data-key="{{ $key }}" data-id="{{ $count }}"
-                                                    class="btn bg-primary-light text-primary border-0 m-auto btn-block auto_translate justify-content-center h-40px">
+                                                    class="btn bg-primary-light text-primary border-0 m-auto btn-block auto_translate justify-content-center align-items-center h-40px d-inline-flex">
                                                 <i class="bi bi-translate"></i>
                                             </button>
                                         </td>
                                         <td>
                                             <button type="button" data-key="{{ $key }}" data-count="{{ $count }}"
-                                                    class="btn btn-primary btn-block update-lang justify-content-center h-40px">
-                                                <i class="bi bi-sd-card-fill"></i>
+                                                    class="btn btn-primary btn-block update-lang justify-content-center align-items-center h-40px d-inline-flex">
+                                                <i class="bi bi-check-lg"></i>
                                             </button>
                                         </td>
                                     </tr>

@@ -93,6 +93,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('blog_log', fn () => $this->checkAccess('blog_management', 'log'));
         Gate::define('blog_export', fn () => $this->checkAccess('blog_management', 'export'));
 
+        Gate::define('finance_view', fn () => $this->checkAccess('finance_management', 'view'));
+        Gate::define('finance_edit', fn () => $this->checkAccess('finance_management', 'update'));
+        Gate::define('finance_log', fn () => $this->checkAccess('finance_management', 'log'));
+        Gate::define('finance_withdraw_manage', fn () => $this->checkAccess('finance_management', 'update'));
+
     }
 
     private function checkAccess($module_name, $action){

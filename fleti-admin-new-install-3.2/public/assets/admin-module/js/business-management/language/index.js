@@ -19,8 +19,9 @@ function updateStatus(obj) {
         success: function (data) {
             $('#resource-loader').hide()
             if (data['status'] === 0) {
-                toastr.info(data['message']);
-                $('.status_' + code).prop('checked', true)
+                toastr.error(data['message']);
+                $(obj).prop('checked', !$(obj).prop('checked'));
+                return;
             }
             toastr.success(data['message']);
         },

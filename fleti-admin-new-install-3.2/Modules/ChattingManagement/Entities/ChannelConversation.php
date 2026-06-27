@@ -57,4 +57,9 @@ class ChannelConversation extends Model
         return $this->morphTo();
     }
 
+    public function serviceRequest()
+    {
+        return $this->hasOne(ChannelServiceRequest::class, 'channel_conversation_id');
+    }
+
 }

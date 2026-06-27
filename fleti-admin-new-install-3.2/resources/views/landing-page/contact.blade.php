@@ -1,5 +1,5 @@
 @extends('landing-page.layouts.master')
-@section('title', 'Contact Us')
+@section('title', translate('Contact Us'))
 
 
 @section('content')
@@ -10,7 +10,6 @@
     <div class="container pt-3">
         <section class="page-header">
             <h3 class="title">{{ translate('Contact Us') }}</h3>
-{
         </section>
     </div>
     <!-- Page Header End -->

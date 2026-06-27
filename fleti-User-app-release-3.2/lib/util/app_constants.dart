@@ -57,6 +57,11 @@ class AppConstants {
   static const String channelList = '/api/customer/chat/channel-list';
   static const String conversationList = '/api/customer/chat/conversation';
   static const String sendMessage = '/api/customer/chat/send-message';
+  static const String createChannelWithAdmin = '/api/customer/chat/create-channel-with-admin';
+  static const String sendMessageToAdmin = '/api/customer/chat/send-message-to-admin';
+  static const String sendFaqMessageToAdmin = '/api/customer/chat/send-predefined-question-to-admin';
+  static const String submitServiceRequestToAdmin = '/api/customer/chat/submit-service-request';
+  static const String predefineFawQuestionList = '/api/customer/config/predefined-question-answer-list';
   static const String arrivalPickupPoint = '/api/customer/ride/arrival-time';
   static const String parcelCategoryUri = '/api/customer/parcel/category?limit=100&offset=1';
   static const String suggestedVehicleCategory = '/api/customer/parcel/suggested-vehicle-category?parcel_weight=';
@@ -156,9 +161,8 @@ class AppConstants {
 
 
   static List<LanguageModel> languages = [
-    LanguageModel(imageUrl: Images.unitedKingdom, languageName: 'English', countryCode: 'US', languageCode: 'en',),
-
-    LanguageModel(imageUrl: Images.saudi, languageName: 'عربي', countryCode: 'SA', languageCode: 'ar'),
+    LanguageModel(imageUrl: Images.unitedKingdom, languageName: 'English', countryCode: 'US', languageCode: 'en'),
+    LanguageModel(imageUrl: Images.brazil, languageName: 'Português (BR)', countryCode: 'BR', languageCode: 'pt'),
   ];
 
 

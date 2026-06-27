@@ -49,7 +49,7 @@
     @endif
     <div class="card">
         <div class="card-body">
-            <h5 class="text-center mb-3 text-capitalize">{{translate('trip_status')}}</h5>
+            <h5 class="text-center mb-3 text-capitalize">{{translate('Trip Details')}}</h5>
 
             <div class="mb-3">
                 <label for="trip_status" class="mb-2">{{translate('trip_status')}}</label>

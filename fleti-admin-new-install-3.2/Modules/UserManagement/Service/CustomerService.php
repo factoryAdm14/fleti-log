@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Modules\ChattingManagement\Service\Interfaces\ChannelUserServiceInterface;
 use Modules\TransactionManagement\Repository\TransactionRepositoryInterface;
 use Modules\TripManagement\Repository\TripRequestRepositoryInterface;
 use Modules\UserManagement\Lib\AdditionalDataForm;
@@ -21,15 +22,18 @@ class CustomerService extends BaseService implements Interfaces\CustomerServiceI
     protected $userLevelRepository;
     protected $tripRequestRepository;
     protected $transactionRepository;
+    protected $channelUserService;
 
     public function __construct(UserRepositoryInterface        $userRepository, UserLevelRepositoryInterface $userLevelRepository,
-                                TripRequestRepositoryInterface $tripRequestRepository, TransactionRepositoryInterface $transactionRepository)
+                                TripRequestRepositoryInterface $tripRequestRepository, TransactionRepositoryInterface $transactionRepository,
+                                ChannelUserServiceInterface    $channelUserService)
     {
         parent::__construct($userRepository);
         $this->userRepository = $userRepository;
         $this->userLevelRepository = $userLevelRepository;
         $this->tripRequestRepository = $tripRequestRepository;
         $this->transactionRepository = $transactionRepository;
+        $this->channelUserService = $channelUserService;
     }
 
     public function index(array $criteria = [], array $relations = [], array $whereHasRelations = [], array $orderBy = [], ?int $limit = null, ?int $offset = null, array $withCountQuery = [], array $appends = [], array $groupBy = []): Collection|LengthAwarePaginator
@@ -479,5 +483,54 @@ class CustomerService extends BaseService implements Interfaces\CustomerServiceI
             $this->transactionRepository->create($transferData);
         }
 
+    }
+
+    public function getChattingCustomerList(array $data): Collection
+    {
+        $channelUsers = $this->channelUserService->getBy(criteria: ['user_id' => auth()->user()?->id]);
+        $criteria['user_type'] = CUSTOMER;
+        $searchData = [];
+        if (array_key_exists('search', $data) && $data['search'] != '') {
+            $searchData['fields'] = ['full_name', 'first_name', 'last_name'];
+            $searchData['value'] = $data['search'];
+        }
+        $whereInCriteria = [
+            'channel_id' => $channelUsers->pluck('channel_id')->toArray()
+        ];
+        $relations = [
+            'channelUsersToAdmin' => function ($query) use ($whereInCriteria) {
+                $query->when(!empty($whereInCriteria), function ($whereInQuery) use ($whereInCriteria) {
+                    foreach ($whereInCriteria as $column => $values) {
+                        $whereInQuery->whereIn($column, $values);
+                    }
+                })
+                    ->with(['conversations' => function ($query) {
+                        $query->whereNotNull('id')->latest('created_at');
+                    }]);
+            }
+        ];
+
+        $whereHasRelations = [
+            'whereHas' => function ($query) use ($whereInCriteria) {
+                $query->whereHas('channelUsersToAdmin', function ($query) use ($whereInCriteria) {
+                    $query->when(!empty($whereInCriteria), function ($whereInQuery) use ($whereInCriteria) {
+                        foreach ($whereInCriteria as $column => $values) {
+                            $whereInQuery->whereIn($column, $values);
+                        }
+                    })
+                        ->whereHas('conversations', function ($query) {
+                            $query->whereNotNull('id');
+                        });
+                });
+            }
+        ];
+
+        return $this->userRepository->getChattingDriverList(
+            criteria: $criteria,
+            searchCriteria: $searchData,
+            whereInCriteria: $whereInCriteria,
+            relations: $relations,
+            whereHasRelations: $whereHasRelations
+        );
     }
 }

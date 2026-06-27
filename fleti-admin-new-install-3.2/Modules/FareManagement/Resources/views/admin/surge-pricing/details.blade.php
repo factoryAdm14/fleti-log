@@ -737,8 +737,6 @@
 
 @push('script')
     <script src="{{dynamicAsset('public/assets/admin-module/plugins/apex/apexcharts.min.js')}}"></script>
-    <script src="{{ dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment.min.js') }}"></script>
-    <script src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/daterangepicker.min.js')}}"></script>
     <script src="{{  dynamicAsset('public/assets/admin-module/js/fare-management/surge-pricing/create-edit.js') }}"></script>
     <script>
         function tripStatistics(zone = 'all') {

@@ -4,6 +4,7 @@ namespace Modules\ZoneManagement\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ZoneStoreUpdateRequest extends FormRequest
 {
@@ -14,9 +15,13 @@ class ZoneStoreUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $id = $this->id;
+        $id = $this->route('id');
         return [
-            'name' => 'required|max:191|unique:zones,name,'.$id,
+            'name' => [
+                'required',
+                'max:191',
+                Rule::unique('zones', 'name')->ignore($id)->whereNull('deleted_at'),
+            ],
             'coordinates' => [
                 'required',
                 function ($attribute, $value, $fail) {

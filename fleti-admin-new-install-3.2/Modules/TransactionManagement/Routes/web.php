@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\TransactionManagement\Http\Controllers\Web\Admin\Report\ReportController;
+use Modules\TransactionManagement\Http\Controllers\Web\Admin\Transaction\PixTransactionController;
 use Modules\TransactionManagement\Http\Controllers\Web\Admin\Transaction\TransactionController;
 
 /*
@@ -21,6 +22,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
             Route::get('/', 'index')->name('index');
             Route::get('export', 'export')->name('export');
         });
+        Route::controller(PixTransactionController::class)->group(function () {
+            Route::get('pix', 'index')->name('pix.index');
+            Route::get('pix/export', 'export')->name('pix.export');
+        });
     });
     Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
         Route::controller(ReportController::class)->group(function () {
@@ -34,6 +39,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
             Route::get('expense', 'expenseReport')->name('expense');
             Route::get('expenseReportExport', 'expenseReportExport')->name('expenseReportExport');
             Route::get('singleExpenseReportExport/{id}', 'singleExpenseReportExport')->name('singleExpenseReportExport');
+        });
+        Route::controller(PixTransactionController::class)->group(function () {
+            Route::get('pix', 'report')->name('pix');
+            Route::get('pixReportExport', 'reportExport')->name('pixReportExport');
         });
     });
 });

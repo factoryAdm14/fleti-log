@@ -4,7 +4,7 @@
      $solutionCount = $activeOurSolutions->count() ?? 0;
 @endphp
 @extends('landing-page.layouts.master')
-@section('title', 'Home')
+@section('title', translate('Home'))
 
 @section('content')
     <!-- Intro Section Start -->
@@ -13,8 +13,8 @@
             <div class="banner-wrapper justify-content-between bg__img wow animate__fadeInDown"
                  data-img="{{ $introSection && $introSection['background_image'] ? dynamicStorage(path: 'storage/app/public/business/landing-pages/intro-section/'.$introSection['background_image']) : dynamicAsset(path: 'public/landing-page/assets/img/banner/banner-bg.png') }}">
                 <div class="banner-content text-center text-sm-start">
-                    <h1 class="title fs-20-mobile max-w-100">{!! $introSection && $introSection['title'] ? change_text_color_or_bg($introSection['title']) : translate("It’s Time to Change The Riding Experience") !!}</h1>
-                    <p class="txt fs-12-mobile">{!! $introSection && $introSection['sub_title'] ? change_text_color_or_bg($introSection['sub_title']) : translate("Embrace the future today and explore the amazing features that make "). ($businessName  ??  "DriveMond") .translate("the smart, sustainable, and efficient ride sharing & delivery solution.") !!}
+                    <h1 class="title fs-20-mobile max-w-100">{!! $introSection && $introSection['title'] ? change_text_color_or_bg($introSection['title']) : translate("It's Time to Change The Riding Experience") !!}</h1>
+                    <p class="txt fs-12-mobile">{!! $introSection && $introSection['sub_title'] ? change_text_color_or_bg($introSection['sub_title']) : translate('Embrace the future today and explore the amazing features that make ') . ($businessName ?? 'Fleti') . translate('the smart, sustainable, and efficient ride sharing & delivery solution.') !!}
                     </p>
                     @if($driverAppVersionControlForAndroid || $driverAppVersionControlForIos || $customerAppVersionControlForAndroid || $customerAppVersionControlForIos)
                         <div class="app--btns d-flex flex-wrap flex-column flex-sm-row">
@@ -65,7 +65,7 @@
                                 <div class="dropdown py-0">
                                     <a href="#"
                                        class="cmn--btn btn-white text-nowrap overflow-hidden text-truncate h-50 d-flex gap-2 lh-1"
-                                       data-bs-toggle="dropdown">{{translate('Earn_From')}} {{ $businessName ?? "DriveMond" }}
+                                       data-bs-toggle="dropdown">{{translate('Earn_From')}} {{ $businessName ?? 'Fleti' }}
                                         <i
                                             class="bi bi-chevron-down"></i></a>
                                     <div class="dropdown-menu dropdown-button-menu">
@@ -94,12 +94,12 @@
                             @elseif($driverAppVersionControlForAndroid)
                                 <a href="{{$driverAppVersionControlForAndroid['app_url']}}" target="_blank"
                                    class="cmn--btn btn-white text-nowrap overflow-hidden text-truncate h-50">
-                                    {{translate('Earn_From')}} {{ $businessName ?? "DriveMond" }}
+                                    {{translate('Earn_From')}} {{ $businessName ?? 'Fleti' }}
                                 </a>
                             @elseif($driverAppVersionControlForIos)
                                 <a href="{{$driverAppVersionControlForIos['app_url']}}" target="_blank"
                                    class="cmn--btn btn-white text-nowrap overflow-hidden text-truncate h-50">
-                                    {{translate('Earn_From')}} {{ $businessName ?? "DriveMond" }}
+                                    {{translate('Earn_From')}} {{ $businessName ?? 'Fleti' }}
                                 </a>
                             @endif
                         </div>
@@ -289,7 +289,7 @@
                                     {!! $cardOneGallery['title'] ?  change_text_color_or_bg($cardOneGallery['title']) : translate('Ride Completed ') .change_text_color_or_bg(('**'. translate('Hassle-Free') .'**'))  !!}
                                 </h3>
                                 <p class="fs-16 mb-0 fs-12-mobile wow animate__fadeInUp">
-                                    {!! $cardOneGallery['subtitle'] ? change_text_color_or_bg($cardOneGallery['subtitle']) : translate('Experience comfort, safety, and satisfaction with every trip. End your journey with a smile — every time with DriveMond.') !!}
+                                    {!! $cardOneGallery['subtitle'] ? change_text_color_or_bg($cardOneGallery['subtitle']) : translate('Experience comfort, safety, and satisfaction with every trip. End your journey with a smile — every time with Fleti.') !!}
                                 </p>
                             </div>
                         </div>
@@ -511,9 +511,9 @@
                                          alt="client">
                                 </div>
                                 <div class="testimonial__item-cont">
-                                    <p class="mb-2 name text-dark"><strong>{{ "Roofus K." }}</strong>
+                                    <p class="mb-2 name text-dark"><strong>{{ translate('Roofus K.') }}</strong>
                                     <p>
-                                    <p class="text--base mb-0">{{ "Customer" }}</p>
+                                    <p class="text--base mb-0">{{ translate('Customer') }}</p>
                                     <div class="rating mb-2">
                                         @php($count = 5)
 
@@ -529,7 +529,7 @@
                                     </div>
                                     <p>
                                     <blockquote>
-                                        {{ "Exceeded my expectations! Customer support is responsive and helpful. Fantastic experience!" }}
+                                        {{ translate('Exceeded my expectations! Customer support is responsive and helpful. Fantastic experience!') }}
                                     </blockquote>
                                     </p>
                                 </div>

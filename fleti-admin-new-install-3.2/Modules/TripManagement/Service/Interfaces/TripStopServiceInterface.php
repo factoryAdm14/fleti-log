@@ -2,7 +2,7 @@
 
 namespace Modules\TripManagement\Service\Interfaces;
 
-use App\Service\Interfaces\BaseServiceInterface;
+use App\Service\BaseServiceInterface;
 use Modules\TripManagement\Entities\TripRequest;
 use Modules\TripManagement\Entities\TripStop;
 

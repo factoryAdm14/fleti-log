@@ -25,7 +25,7 @@
                                     <input type="text" class="form-control date-range-picker"
                                            value="{{ request('date_range') }}" name="date_range"
                                            id="dateRange" autocomplete="off"
-                                           placeholder="MM/DD/YYYY - MM/DD/YYYY">
+                                           placeholder="{{ session('locale', 'en') === 'pt' ? 'DD/MM/AAAA - DD/MM/AAAA' : 'MM/DD/YYYY - MM/DD/YYYY' }}">
                                     <span class="icon-calendar">
                                     <i class="bi bi-calendar-event"></i>
                                 </span>
@@ -130,9 +130,6 @@
 
 @push('script')
 
-    <script type="text/javascript"
-            src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment.min.js')}}"></script>
-    <script src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/daterangepicker.min.js')}}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/js/date-range-picker.js')}}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/js/maps/map-init-overview.js')}}"></script>
 

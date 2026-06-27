@@ -306,6 +306,16 @@ class EfiPixService
     private function markAsPaid(PaymentRequest $payment, string $txid): void
     {
         if ($payment->is_paid) {
+            if (class_exists(\Modules\FinanceManagement\Service\FinanceAuditService::class)) {
+                app(\Modules\FinanceManagement\Service\FinanceAuditService::class)->logSystem(
+                    action: 'payment_webhook_duplicate',
+                    entityType: PaymentRequest::class,
+                    entityId: (string) $payment->id,
+                    after: ['txid' => $txid],
+                    notes: 'Webhook duplicado ignorado (EFI PIX)',
+                );
+            }
+
             return;
         }
 

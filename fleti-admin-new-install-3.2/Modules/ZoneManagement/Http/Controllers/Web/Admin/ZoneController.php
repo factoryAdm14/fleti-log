@@ -61,10 +61,17 @@ class ZoneController extends BaseController
     {
         $this->authorize('zone_add');
         try {
-            $this->zoneService->create($request->validated());
-        } catch (\Exception $e) {
-            Toastr::error(DEFAULT_400['message']);
-            return back();
+            $zone = $this->zoneService->create($request->validated());
+            if (! $zone) {
+                Toastr::error(DEFAULT_400['message']);
+
+                return back()->withInput();
+            }
+        } catch (\Throwable $e) {
+            report($e);
+            Toastr::error($e->getMessage() ?: DEFAULT_400['message']);
+
+            return back()->withInput();
         }
         Toastr::success(ZONE_STORE_200['message']);
         Toastr::warning(ZONE_STORE_INSTRUCTION_200['message']);
@@ -100,9 +107,21 @@ class ZoneController extends BaseController
     public function destroy(string $id): RedirectResponse
     {
         $this->authorize('zone_delete');
-        $this->zoneService->delete(id: $id);
+        try {
+            if (! $this->zoneService->delete($id)) {
+                Toastr::error(DEFAULT_204['message']);
+
+                return back();
+            }
+        } catch (\Throwable $e) {
+            report($e);
+            Toastr::error($e->getMessage() ?: DEFAULT_400['message']);
+
+            return back();
+        }
         Toastr::success(ZONE_DESTROY_200['message']);
-        return back();
+
+        return redirect()->route('admin.zone.index');
     }
 
     public function status(Request $request): JsonResponse

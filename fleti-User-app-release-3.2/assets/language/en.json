@@ -948,6 +948,17 @@
   "debit": "Debit",
   "credit": "Credit",
   "reset": "Reset",
-  "filter": "Filter"
+  "filter": "Filter",
+  "want_to_chat_with_us": "Want to Chat with Us?",
+  "chat_with_support": "Chat With Support",
+  "service_request": "Service Request",
+  "origin": "Origin",
+  "ride": "Ride",
+  "delivery": "Delivery",
+  "notes": "Notes",
+  "faqs": "FAQs",
+  "admin": "Admin",
+  "start_conversation": "Start conversation",
+  "fill_all_required_fill": "Please fill all required fields"
 
 }

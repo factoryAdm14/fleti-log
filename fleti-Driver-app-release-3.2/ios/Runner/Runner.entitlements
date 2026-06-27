@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
             <array>
-                <string>applinks:YOUR_DOMAIN_HERE_WITHOUT_HTTP</string>
+                <string>applinks:fleti.com.br</string>
             </array>
             <key>keychain-access-groups</key>
             <array>

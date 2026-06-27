@@ -20,6 +20,7 @@ use Modules\AuthManagement\Http\Requests\RegistrationFromOtpStoreRequest;
 use Modules\AuthManagement\Http\Requests\UserRegisterApiRequest;
 use Modules\AuthManagement\Service\Interfaces\AuthServiceInterface;
 use Modules\AuthManagement\Traits\AdditionalRegistrationDataTrait;
+use Modules\AuthManagement\Traits\LegalConsentRegistrationTrait;
 use Modules\BusinessManagement\Service\Interfaces\SettingServiceInterface;
 use Modules\TransactionManagement\Traits\TransactionTrait;
 use Modules\UserManagement\Entities\User;
@@ -40,7 +41,7 @@ use stdClass;
 
 class AuthController extends Controller
 {
-    use TransactionTrait, AdditionalRegistrationDataTrait;
+    use TransactionTrait, AdditionalRegistrationDataTrait, LegalConsentRegistrationTrait;
 
     protected $customerService;
     protected $driverService;
@@ -120,7 +121,9 @@ class AuthController extends Controller
         $additionalUserType = $route ? 'customer' : 'driver';
         $this->validateAdditionalRegistrationData($request, $additionalUserType);
 
-        $user = $route ? $this->customerService->create($request->all()) : $this->driverService->create($request->all());
+        $registrationData = $this->stripLegalConsentFields($request->all());
+        $user = $route ? $this->customerService->create($registrationData) : $this->driverService->create($registrationData);
+        $this->recordLegalConsent($user, $request);
         $isMailEnabled = businessConfig(key: EMAIL_CONFIG, settingsType: EMAIL_CONFIG);
         if ($user->email && $isMailEnabled && $user->type == DRIVER) {
             try {
@@ -231,7 +234,9 @@ class AuthController extends Controller
         $additionalUserType = $route ? 'customer' : 'driver';
         $this->validateAdditionalRegistrationData($request, $additionalUserType);
 
-        $user = $route ? $this->customerService->createAfterOtpMatch($request->all()) : $this->driverService->createAfterOtpMatch($request->all());
+        $registrationData = $this->stripLegalConsentFields($request->all());
+        $user = $route ? $this->customerService->createAfterOtpMatch($registrationData) : $this->driverService->createAfterOtpMatch($registrationData);
+        $this->recordLegalConsent($user, $request);
         $this->storeAdditionalRegistrationData($user, $request, $additionalUserType);
         if (array_key_exists('referral_code', $request->all()) && $request->referral_code && $referralUser && $user) {
             if ($route) {
@@ -329,7 +334,9 @@ class AuthController extends Controller
         $additionalUserType = $route ? 'customer' : 'driver';
         $this->validateAdditionalRegistrationData($request, $additionalUserType);
 
-        $user = $this->userService->mergeUserAccount($request->all(), $doesOTPUserExist->id);
+        $registrationData = $this->stripLegalConsentFields($request->all());
+        $user = $this->userService->mergeUserAccount($registrationData, $doesOTPUserExist->id);
+        $this->recordLegalConsent($user, $request);
         $this->storeAdditionalRegistrationData($user, $request, $additionalUserType);
         if (array_key_exists('referral_code', $request->all()) && $request->referral_code && $referralUser && $user && !$this->referralCustomerService->findOneBy(criteria: ['customer_id' => $user->id, 'ref_by' => $referralUser->id])) {
             if ($route) {

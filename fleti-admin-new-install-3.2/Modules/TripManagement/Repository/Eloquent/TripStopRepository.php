@@ -2,7 +2,7 @@
 
 namespace Modules\TripManagement\Repository\Eloquent;
 
-use App\Repository\BaseRepository;
+use App\Repository\Eloquent\BaseRepository;
 use Modules\TripManagement\Entities\TripStop;
 use Modules\TripManagement\Repository\TripStopRepositoryInterface;
 

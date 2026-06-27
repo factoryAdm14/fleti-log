@@ -9,7 +9,7 @@ abstract class WalletServiceInterface {
   Future<dynamic> createWithdrawMethodInfo(List <String> typeKey, List<String> typeValue,int id);
   Future<dynamic> updateWithdrawMethodInfo(List <String> typeKey, List<String> typeValue,int methodId,String methodInfoId);
   Future<dynamic> deleteWithdrawMethodInfo(String methodId);
-  Future<dynamic> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note);
+  Future<dynamic> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note, {String? methodInfoId});
   Future<dynamic> getPayableHistoryList(int offset);
   Future<dynamic> getWalletHistoryList(int offset);
   Future<dynamic> getIncomeStatement(int offset);

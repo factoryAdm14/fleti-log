@@ -2,6 +2,8 @@
 
 
 use App\Events\CustomerTripPaymentSuccessfulEvent;
+use Modules\FinanceManagement\Lib\RidePaymentFinanceHook;
+use Modules\FinanceManagement\Service\FinancePaymentVerificationService;
 use Modules\TripManagement\Entities\TripRequest;
 use Modules\TransactionManagement\Traits\TransactionTrait;
 use Modules\UserManagement\Enums\SuspendReasonEnum;
@@ -11,6 +13,12 @@ if (!function_exists('tripRequestUpdate'))
 {
     function tripRequestUpdate($data)
     {
+        if (class_exists(FinancePaymentVerificationService::class)) {
+            if (!app(FinancePaymentVerificationService::class)->assertPayment($data)) {
+                return false;
+            }
+        }
+
         $trip = TripRequest::query()
             ->with(['driver.userAccount', 'customer', 'driver.driverDetails'])
             ->find($data->attribute_id);
@@ -73,6 +81,13 @@ if (!function_exists('tripRequestUpdate'))
         (new class {
             use TransactionTrait;
         })->digitalPaymentTransaction($trip);
+
+        if (class_exists(RidePaymentFinanceHook::class)) {
+            RidePaymentFinanceHook::handle(
+                trip: $trip->fresh(['fee', 'driver']),
+                paymentId: $data->id ?? null,
+            );
+        }
 
         return $trip;
     }

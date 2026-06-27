@@ -9,6 +9,7 @@ use Modules\UserManagement\Http\Controllers\Web\Admin\Customer\CustomerWalletCon
 use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\DriverController;
 use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\DriverLevelController;
 use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\IdentityVerificationController;
+use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\DriverWalletController;
 use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\WithdrawalController;
 use Modules\UserManagement\Http\Controllers\Web\Admin\Driver\WithdrawRequestController;
 use Modules\UserManagement\Http\Controllers\Web\Admin\Employee\EmployeeController;
@@ -155,6 +156,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
                 Route::post('multiple-action', 'multipleAction')->name('multiple-action');
                 Route::get('single-invoice/{id}', 'singleInvoice')->name('single-invoice');
                 Route::get('multiple-invoice', 'multipleInvoice')->name('multiple-invoice');
+            });
+        });
+
+        Route::group(['prefix' => 'wallet', 'as' => 'wallet.'], function () {
+            Route::controller(DriverWalletController::class)->group(function () {
+                Route::any('index', 'index')->name('index');
+                Route::post('store', 'store')->name('store');
+                Route::get('export', 'export')->name('export');
             });
         });
 

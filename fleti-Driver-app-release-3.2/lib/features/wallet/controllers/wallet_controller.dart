@@ -242,6 +242,7 @@ class WalletController extends GetxController implements GetxService {
       selectedMethodInfo!.withdrawMethod!.id!,
       balance,
       note,
+      methodInfoId: selectedMethodInfo!.id,
     );
 
     if (response!.statusCode == 200) {

@@ -76,6 +76,11 @@ import 'package:ride_sharing_user_app/features/splash/domain/repositories/config
 import 'package:ride_sharing_user_app/features/splash/domain/services/config_service.dart';
 import 'package:ride_sharing_user_app/features/splash/domain/services/config_service_interface.dart';
 import 'package:ride_sharing_user_app/features/support/controllers/help_support_controller.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/controllers/help_and_support_controller.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/domain/repositories/help_and_support_repository.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/domain/repositories/help_and_support_repository_interface.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/domain/services/help_and_support_service.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/domain/services/help_and_support_service_interface.dart';
 import 'package:ride_sharing_user_app/features/trip/controllers/trip_controller.dart';
 import 'package:ride_sharing_user_app/features/auth/controllers/auth_controller.dart';
 import 'package:ride_sharing_user_app/features/coupon/controllers/coupon_controller.dart';
@@ -186,6 +191,7 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => LevelController(levelServiceInterface: Get.find()));
   Get.lazyPut(() => ReferAndEarnController(referEarnServiceInterface: Get.find()));
   Get.lazyPut(() => HelpSupportController());
+  Get.lazyPut(() => HelpAndSupportController(helpAndSupportServiceInterface: Get.find()));
   Get.lazyPut(() => RefundRequestController(refundRequestServiceInterface: Get.find()));
   Get.lazyPut(() => SafetyAlertController(safetyAlertServiceInterface: Get.find()));
   Get.lazyPut(() => LocationTrackingController(locationTrackingServiceInterface: Get.find()));
@@ -215,6 +221,11 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => messageRepositoryInterface);
   MessageServiceInterface messageServiceInterface = MessageService(messageRepositoryInterface: Get.find());
   Get.lazyPut(() => messageServiceInterface);
+
+  HelpAndSupportRepositoryInterface helpAndSupportRepositoryInterface = HelpAndSupportRepository(apiClient: Get.find());
+  Get.lazyPut(() => helpAndSupportRepositoryInterface);
+  HelpAndSupportServiceInterface helpAndSupportServiceInterface = HelpAndSupportService(helpAndSupportRepositoryInterface: Get.find());
+  Get.lazyPut(() => helpAndSupportServiceInterface);
 
   NotificationRepositoryInterface notificationRepositoryInterface = NotificationRepository(apiClient: Get.find());
   Get.lazyPut(() => notificationRepositoryInterface);

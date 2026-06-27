@@ -64,7 +64,8 @@
             "Modules\\": "Modules/"
         },
         "exclude-from-classmap": [
-            "Modules/*/Database/Migrations"
+            "Modules/*/Database/Migrations",
+            "Modules/*/Database/Seeders"
         ],
         "files": [
             "app/Lib/Helpers.php",
@@ -78,6 +79,7 @@
             "app/Library/TripRequestUpdate.php",
             "app/Library/CustomerWalletUpdate.php",
             "app/Library/DriverDigitalPay.php",
+            "app/Library/DriverSubscriptionPaymentUpdate.php",
             "Modules/AiModule/Lib/Response.php",
             "Modules/AiModule/Lib/Helper.php",
             "Modules/BlogManagement/Lib/Helper.php"

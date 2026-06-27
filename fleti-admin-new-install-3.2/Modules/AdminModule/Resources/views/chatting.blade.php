@@ -43,20 +43,31 @@
             <div class="col-xl-3 col-lg-4 chatSel">
                 <div class="card card-body px-0 h-100">
                     <div class="inbox_people">
+                        <ul class="nav nav--tabs bg-transparent nav--tabs__style2 p-1 rounded bg-white mb-3 px-20">
+                            <li class="nav-item text-capitalize">
+                                <a href="javascript:" class="nav-link active chatting-tab" data-chat-tab="drivers">{{ translate('Drivers') }}</a>
+                            </li>
+                            <li class="nav-item text-capitalize">
+                                <a href="javascript:" class="nav-link chatting-tab" data-chat-tab="customers">{{ translate('Customers') }}</a>
+                            </li>
+                        </ul>
                         <form class="search-form mb-4 px-20" id="chat-search-form">
                             <div class="input-group search-form__input_group">
                                 <input type="text"
-                                       class="theme-input-style search-form__input fw-semibold chatting-drivers-list-search"
-                                       value="" name="search" id="search" placeholder="Search driver">
+                                       class="theme-input-style search-form__input fw-semibold chatting-list-search"
+                                       value="" name="search" id="search" placeholder="{{ translate('Search driver') }}">
                                 <span class="search-form__icon pe-0">
                                     <i class="bi bi-search"></i>
                                 </span>
                             </div>
                         </form>
-                        <h5 class="mb-3 px-20">{{ translate('Drivers') }}</h5>
+                        <h5 class="mb-3 px-20 chatting-list-title">{{ translate('Drivers') }}</h5>
                     </div>
                     <div id="chatting-drivers-list">
                         @include('adminmodule::partials.chatting._search-drivers')
+                    </div>
+                    <div id="chatting-customers-list" class="d-none">
+                        @include('adminmodule::partials.chatting._search-customers')
                     </div>
                 </div>
             </div>
@@ -69,7 +80,7 @@
                         <div class="d-flex flex-column align-items-center gap-20">
                             <img width="48" src="{{ dynamicAsset('public/assets/admin-module/img/svg/driver-man.svg') }}"
                                  alt="">
-                            <p class="fs-16">{{ translate('Select a driver form list') }}</p>
+                            <p class="fs-16 chatting-empty-text">{{ translate('Select a driver form list') }}</p>
                         </div>
                     </div>
 
@@ -82,7 +93,7 @@
         </div>
 
         <span id="image-url" data-url=""></span>
-        <span id="chatting-post-url" data-url="{{ route('admin.send-message-to-driver') }}"></span>
+        <span id="chatting-post-url" data-driver-url="{{ route('admin.send-message-to-driver') }}" data-customer-url="{{ route('admin.send-message-to-customer') }}"></span>
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
     </div>
@@ -131,22 +142,59 @@
         $(document).ready(function () {
             conversation();
 
-            let selectedDriverChannelId = null;
+            let activeChatTab = 'drivers';
+            let selectedChannelId = null;
             let value = '';
 
-            function activeDriver() {
-                if (selectedDriverChannelId) {
-                    let driverConversation = $('.driver-conversation');
-                    driverConversation.each(function () {
-                        if ($(this).data('channel-id') == selectedDriverChannelId) {
+            function setActiveChatTab(tab) {
+                activeChatTab = tab;
+                $('.chatting-tab').removeClass('active');
+                $('.chatting-tab[data-chat-tab="' + tab + '"]').addClass('active');
+
+                if (tab === 'drivers') {
+                    $('#chatting-drivers-list').removeClass('d-none');
+                    $('#chatting-customers-list').addClass('d-none');
+                    $('.chatting-list-title').text('{{ translate('Drivers') }}');
+                    $('.chatting-list-search').attr('placeholder', '{{ translate('Search driver') }}');
+                    $('.chatting-empty-text').text('{{ translate('Select a driver form list') }}');
+                    $('#chatting-post-url').data('url', $('#chatting-post-url').data('driver-url'));
+                } else {
+                    $('#chatting-drivers-list').addClass('d-none');
+                    $('#chatting-customers-list').removeClass('d-none');
+                    $('.chatting-list-title').text('{{ translate('Customers') }}');
+                    $('.chatting-list-search').attr('placeholder', '{{ translate('Search customer') }}');
+                    $('.chatting-empty-text').text('{{ translate('Select a customer from list') }}');
+                    $('#chatting-post-url').data('url', $('#chatting-post-url').data('customer-url'));
+                }
+
+                $('#chattingConversation').empty();
+                $('.empty-chat-state').removeClass('d-none');
+                selectedChannelId = null;
+                value = $('.chatting-list-search').val().toLowerCase();
+                refreshParticipantList();
+            }
+
+            $('.chatting-tab').on('click', function () {
+                setActiveChatTab($(this).data('chat-tab'));
+            });
+
+            function activeParticipant() {
+                if (selectedChannelId) {
+                    let selector = activeChatTab === 'drivers' ? '.driver-conversation' : '.customer-conversation';
+                    $(selector).each(function () {
+                        if ($(this).data('channel-id') == selectedChannelId) {
                             $(this).addClass('active');
                         }
                     });
                 }
             }
 
+            function refreshParticipantList() {
+                let url = activeChatTab === 'drivers'
+                    ? '{{ route('admin.search-drivers') }}'
+                    : '{{ route('admin.search-customers') }}';
+                let listSelector = activeChatTab === 'drivers' ? '#chatting-drivers-list' : '#chatting-customers-list';
 
-            function driverList(url, value = '') {
                 $.ajax({
                     url: url,
                     type: 'GET',
@@ -154,25 +202,28 @@
                         search: value,
                     },
                     success: function (response) {
-                        $('#chatting-drivers-list').empty().html(response);
+                        $(listSelector).empty().html(response);
                         conversation();
-                        activeDriver();
+                        activeParticipant();
 
-                        $(".driver-conversation.active")[0].scrollIntoView({
-                            behavior: "auto",
-                            block: "nearest",
-                            inline: "center",
-                        });
+                        let activeItem = activeChatTab === 'drivers'
+                            ? $(".driver-conversation.active")[0]
+                            : $(".customer-conversation.active")[0];
+                        if (activeItem) {
+                            activeItem.scrollIntoView({
+                                behavior: "auto",
+                                block: "nearest",
+                                inline: "center",
+                            });
+                        }
                     }
-                })
+                });
             }
 
-            //search-drivers-list
-            $('.chatting-drivers-list-search').on('keyup', function () {
+            $('.chatting-list-search').on('keyup', function () {
                 value = $(this).val().toLowerCase();
-                driverList('{{ route('admin.search-drivers') }}', value);
+                refreshParticipantList();
             });
-            //end-search-drivers-list
             // search-saved-answer-list
             $('#searchSavedReply').on('keyup', function () {
                 let value = $(this).val().toLowerCase();
@@ -196,7 +247,7 @@
             // Success Callback for Chatting Conversation
             function onSuccess(response) {
                 $('#chattingConversation').empty().html(response);
-                driverList('{{ route('admin.search-drivers') }}', value);
+                refreshParticipantList();
                 // Dynamically load scripts
                 $.getScript("{{ dynamicAsset('public/assets/admin-module/js/chatting/emoji.js') }}");
                 $.getScript("{{ dynamicAsset('public/assets/admin-module/js/chatting/select-multiple-file.js') }}");
@@ -218,22 +269,27 @@
             }
 
             function conversation() {
-                let driverConversation = $('.driver-conversation');
-                driverConversation.on('click', function () {
+                $('.driver-conversation, .customer-conversation').off('click').on('click', function () {
                     $(this).addClass('active').siblings().removeClass('active');
-                    let driverId = $(this).data('driver-id');
                     let conversationElement = $(this);
+                    let participantId = activeChatTab === 'drivers'
+                        ? conversationElement.data('driver-id')
+                        : conversationElement.data('customer-id');
 
                     if (conversationElement.attr('data-channel-id')) {
                         let channelId = conversationElement.attr('data-channel-id');
-                        selectedDriverChannelId = channelId;
-                        let url = '{{ route('admin.driver-conversation', ':channelId') }}';
+                        selectedChannelId = channelId;
+                        let url = activeChatTab === 'drivers'
+                            ? '{{ route('admin.driver-conversation', ':channelId') }}'
+                            : '{{ route('admin.customer-conversation', ':channelId') }}';
+                        let requestData = activeChatTab === 'drivers'
+                            ? {driverId: participantId}
+                            : {customerId: participantId};
+
                         $.ajax({
                             url: url.replace(':channelId', channelId),
                             type: 'GET',
-                            data: {
-                                driverId: driverId,
-                            },
+                            data: requestData,
                             success: function (response) {
                                 emptyState.addClass('d-none');
                                 onSuccess(response);
@@ -241,27 +297,32 @@
                             }
                         });
                     } else {
+                        let createUrl = activeChatTab === 'drivers'
+                            ? '{{ route('admin.create-channel-with-admin') }}'
+                            : '{{ route('admin.create-channel-with-customer') }}';
+                        let createData = activeChatTab === 'drivers'
+                            ? {driverId: participantId, _token: '{{ csrf_token() }}'}
+                            : {customerId: participantId, _token: '{{ csrf_token() }}'};
+                        let conversationUrl = activeChatTab === 'drivers'
+                            ? '{{ route('admin.driver-conversation', ':channelId') }}'
+                            : '{{ route('admin.customer-conversation', ':channelId') }}';
+                        let requestData = activeChatTab === 'drivers'
+                            ? {driverId: participantId}
+                            : {customerId: participantId};
+
                         $.ajax({
-                            url: '{{ route('admin.create-channel-with-admin') }}',
+                            url: createUrl,
                             type: 'PUT',
-                            data: {
-                                driverId: driverId,
-                                _token: '{{ csrf_token() }}'
-                            },
+                            data: createData,
                             success: function (response) {
                                 let newChannelId = response.data.channel.id;
                                 conversationElement.attr('data-channel-id', newChannelId);
-                                selectedDriverChannelId = newChannelId;
-                                let url = '{{ route('admin.driver-conversation', ':channelId') }}';
-                                url = url.replace(':channelId', newChannelId);
+                                selectedChannelId = newChannelId;
                                 $.ajax({
-                                    url: url,
+                                    url: conversationUrl.replace(':channelId', newChannelId),
                                     type: 'GET',
-                                    data: {
-                                        driverId: driverId,
-                                    },
+                                    data: requestData,
                                     success: function (response) {
-                                        // Perform actions on success
                                         emptyState.addClass('d-none');
                                         onSuccess(response);
                                         ajaxFormRenderChattingMessages();
@@ -305,9 +366,13 @@
                     }
                     let formData = new FormData(this);
                     let channelId = $('#msgSendBtn').data('channel-id');
-                    let driverId = $('#msgSendBtn').data('driver-id');
-                    formData.append('channelId', channelId);
-                    formData.append('driverId', driverId);
+                    if (activeChatTab === 'drivers') {
+                        formData.append('channelId', channelId);
+                        formData.append('driverId', $('#msgSendBtn').data('driver-id'));
+                    } else {
+                        formData.append('channelId', channelId);
+                        formData.append('customerId', $('#msgSendBtn').data('customer-id'));
+                    }
                     $.ajaxSetup({
                         headers: {
                             "X-XSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
@@ -385,6 +450,8 @@
                     });
                 });
             }
+
+            $('#chatting-post-url').data('url', $('#chatting-post-url').data('driver-url'));
         });
     </script>
 @endpush

@@ -4,7 +4,9 @@ namespace Modules\Gateways\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Gateways\Traits\HasUuid;
+use Modules\UserManagement\Entities\User;
 
 class PaymentRequest extends Model
 {
@@ -33,4 +35,15 @@ class PaymentRequest extends Model
         'created_at',
         'updated_at',
     ];
+
+    protected $casts = [
+        'additional_data' => 'array',
+        'is_paid' => 'boolean',
+        'payment_amount' => 'float',
+    ];
+
+    public function payer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
 }

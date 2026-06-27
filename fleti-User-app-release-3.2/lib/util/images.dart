@@ -4,8 +4,8 @@ class Images {
   static const String signUpScreenLogo = 'assets/image/sign_up_logo.png';
   static const String otpScreenLogo = 'assets/image/otp_screen_logo.png';
   static const String forgotPasswordLogo = 'assets/image/forgot_password.png';
-  static const String saudi = 'assets/image/saudi.png';
   static const String unitedKingdom = 'assets/image/united_kingdom.png';
+  static const String brazil = 'assets/image/brazil.png';
   static const String placeholder = 'assets/image/placeholder.jpg';
   static const String personPlaceholder = 'assets/image/person_placeholder.png';
   static const String cameraPlaceholder = 'assets/image/camera_placeholder.png';
@@ -44,8 +44,11 @@ class Images {
   static const String editProfileName = 'assets/image/edit_name.png';
   static const String editProfilePhone = 'assets/image/edit_phone.png';
   static const String sendMessage = 'assets/image/send_message.png';
+  static const String chatIcon = 'assets/image/chat_image.png';
+  static const String faqImageIcon = 'assets/image/faq_replay_icon.png';
   static const String pickFile = 'assets/image/pick_file.png';
   static const String pickImage = 'assets/image/pick_image.png';
+  static const String filePreview = 'assets/image/files_preview.png';
   static const String bike = 'assets/image/bike.png';
   static const String car = 'assets/image/car.png';
   static const String parcel = 'assets/image/parcel.png';

@@ -13,6 +13,7 @@ use Modules\Gateways\Library\Payer;
 use Modules\Gateways\Library\Payment as PaymentInfo;
 use Modules\Gateways\Library\Receiver;
 use Modules\Gateways\Traits\Payment;
+use Modules\FinanceManagement\Lib\RidePaymentFinanceHook;
 use Modules\TransactionManagement\Traits\TransactionTrait;
 use Modules\TripManagement\Service\Interfaces\TripRequestServiceInterface;
 use Modules\UserManagement\Enums\SuspendReasonEnum;
@@ -85,6 +86,8 @@ class PaymentController extends Controller
 
         $this->customerLevelUpdateChecker($trip->customer);
         DB::commit();
+
+        RidePaymentFinanceHook::handle($trip->fresh(['fee', 'driver']));
         $tripType = ($trip->ride_request_type ?? 'regular') === 'regular' ? 'regular_trip' : 'schedule_trip';
         $push = getNotification('payment_successful', type: $tripType);
         sendDeviceNotification(

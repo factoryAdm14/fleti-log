@@ -15,6 +15,7 @@ use Modules\BusinessManagement\Service\Interfaces\BusinessSettingServiceInterfac
 use Modules\BusinessManagement\Service\Interfaces\CancellationReasonServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\ParcelCancellationReasonServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\ParcelRefundReasonServiceInterface;
+use Modules\BusinessManagement\Service\Interfaces\QuestionAnswerServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\SafetyAlertReasonServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\SafetyPrecautionServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\SettingServiceInterface;
@@ -35,12 +36,14 @@ class ConfigController extends Controller
     protected $parcelRefundReasonService;
     protected $safetyAlertReasonService;
     protected $safetyPrecautionService;
+    protected $questionAnswerService;
 
     public function __construct(BusinessSettingServiceInterface          $businessSettingService, SettingServiceInterface $settingService,
                                 CancellationReasonServiceInterface       $cancellationReasonService, ZoneServiceInterface $zoneService,
                                 UserLastLocationServiceInterface         $userLastLocationService, TripRequestServiceInterface $tripRequestService,
                                 ParcelCancellationReasonServiceInterface $parcelCancellationReasonService, ParcelRefundReasonServiceInterface $parcelRefundReasonService,
-                                SafetyAlertReasonServiceInterface        $safetyAlertReasonService, SafetyPrecautionServiceInterface $safetyPrecautionService)
+                                SafetyAlertReasonServiceInterface        $safetyAlertReasonService, SafetyPrecautionServiceInterface $safetyPrecautionService,
+                                QuestionAnswerServiceInterface           $questionAnswerService)
     {
         $this->businessSettingService = $businessSettingService;
         $this->settingService = $settingService;
@@ -52,6 +55,7 @@ class ConfigController extends Controller
         $this->parcelRefundReasonService = $parcelRefundReasonService;
         $this->safetyAlertReasonService = $safetyAlertReasonService;
         $this->safetyPrecautionService = $safetyPrecautionService;
+        $this->questionAnswerService = $questionAnswerService;
     }
 
     public function configuration()
@@ -117,6 +121,7 @@ class ConfigController extends Controller
             'websocket_port' => (string)$info->firstWhere('key_name', 'websocket_port')?->value ?? 6001,
             'websocket_key' => env('PUSHER_APP_KEY'),
             'websocket_scheme' => env('PUSHER_SCHEME'),
+            'map_api_key' => businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null,
             'base_url' => url('/') . '/api/v1/',
             'review_status' => (bool)$info->firstWhere('key_name', CUSTOMER_REVIEW)?->value ?? null,
             'level_status' => (bool)$info->firstWhere('key_name', CUSTOMER_LEVEL)?->value ?? null,
@@ -221,6 +226,11 @@ class ConfigController extends Controller
             'is_real_time_location_sharing_enabled' => (bool) (businessConfig('enable_real_time_location_sharing', TRIP_SETTINGS)?->value ?? 0),
             'customer_additional_registration_form_fields' => AdditionalDataForm::fields(CUSTOMER),
             'female_only_ride_service' => (bool) (businessConfig('female_only_ride_service', TRIP_SETTINGS)?->value ?? 0),
+            'customer_chatting_setup_status' => (bool)$info->firstWhere('key_name', 'customer_chatting_setup_status')?->value == 1,
+            'customer_question_answer_status' => (bool)$info->firstWhere('key_name', 'customer_chatting_setup_status')?->value == 1 && (bool)$info->firstWhere('key_name', 'customer_question_answer_status')?->value == 1,
+            'legal_consent_required' => legalConsentRequired(),
+            'legal_page_urls' => fletiLegalPageUrls(),
+            'legal_document_version' => \App\Lib\FletiLegalPagesContent::VERSION,
         ];
 
         return response()->json($configs);
@@ -521,6 +531,16 @@ class ConfigController extends Controller
             ];
         });
         return response()->json(responseFormatter(constant: DEFAULT_200, content: $responseData));
+    }
+
+    public function predefinedQuestionAnswerList(): JsonResponse
+    {
+        $predefinedQAs = $this->questionAnswerService->getBy(
+            criteria: ['is_active' => true, 'question_answer_for' => CUSTOMER],
+            orderBy: ['created_at' => 'desc']
+        );
+
+        return response()->json(responseFormatter(DEFAULT_200, $predefinedQAs), 200);
     }
 
     public function calculateDistance(Request $request)

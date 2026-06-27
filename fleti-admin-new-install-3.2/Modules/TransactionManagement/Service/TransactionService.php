@@ -56,6 +56,51 @@ class TransactionService extends BaseService implements Interfaces\TransactionSe
             ->getBy(criteria: $criteria, searchCriteria: $searchCriteria, whereInCriteria: $whereInCriteria, whereBetweenCriteria: $whereBetweenCriteria, relations: ['user'], orderBy: $orderBy, limit: $limit, offset: $offset, appends: $data);
     }
 
+    public function driverWalletTransaction(array $data, array $relations = [], array $orderBy = [], ?int $limit = null, ?int $offset = null): Collection|LengthAwarePaginator|\Illuminate\Support\Collection
+    {
+        $whereBetweenCriteria = [];
+        if (array_key_exists('data', $data) && $data['data'] != ALL_TIME) {
+            if ($data['data'] == 'custom_date') {
+                $date['start'] = $data['start'];
+                $date['end'] = $data['end'];
+            } else {
+                $date = $data['data'];
+            }
+            $date = getDateRange($date);
+            $whereBetweenCriteria = [
+                'created_at' => [$date['start'], $date['end']],
+            ];
+        }
+
+        $criteria = [
+            'account' => 'receivable_balance',
+        ];
+        $searchCriteria = [
+            'fields' => ['id', 'reference'],
+            'value' => $data['search'] ?? '',
+        ];
+        $whereInCriteria = [
+            'attribute' => ['driver_fund_by_admin'],
+        ];
+
+        if (array_key_exists('user_id', $data) && $data['user_id'] && ! in_array($data['user_id'], ['all', 0, '0'], true)) {
+            $criteria['user_id'] = $data['user_id'];
+        }
+
+        return $this->transactionRepository
+            ->getBy(
+                criteria: $criteria,
+                searchCriteria: $searchCriteria,
+                whereInCriteria: $whereInCriteria,
+                whereBetweenCriteria: $whereBetweenCriteria,
+                relations: ['user'],
+                orderBy: $orderBy,
+                limit: $limit,
+                offset: $offset,
+                appends: $data
+            );
+    }
+
     public function export(array $criteria = [], array $relations = [], array $orderBy = [], ?int $limit = null, ?int $offset = null, array $withCountQuery = []): Collection|LengthAwarePaginator|\Illuminate\Support\Collection
     {
         return $this->index(criteria: $criteria,relations: ['user'],orderBy: ['created_at' => 'desc'],limit: $limit,offset: $offset)->map(function ($item) {

@@ -9,6 +9,7 @@ import 'package:ride_sharing_user_app/features/dashboard/controllers/bottom_menu
 import 'package:ride_sharing_user_app/features/map/screens/map_screen.dart';
 import 'package:ride_sharing_user_app/features/message/controllers/message_controller.dart';
 import 'package:ride_sharing_user_app/features/message/screens/message_screen.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/controllers/help_and_support_controller.dart';
 import 'package:ride_sharing_user_app/features/my_level/controller/level_controller.dart';
 import 'package:ride_sharing_user_app/features/my_level/widget/level_complete_dialog_widget.dart';
 import 'package:ride_sharing_user_app/features/my_offer/screens/my_offer_screen.dart';
@@ -418,6 +419,10 @@ class NotificationHelper {
     if (data['action'] == "new_message") {
       Get.find<MessageController>().getConversation(data['type'], 1);
       _toRoute(formSplash, MessageScreen(channelId: data['type'], tripId: data['ride_request_id'], userName: userName ?? data['user_name']));
+
+    }else if(data['action'] == 'admin_message'){
+      Get.find<HelpAndSupportController>().getPredefineFaqList();
+      Get.find<HelpAndSupportController>().createChannel(fromSplash: formSplash);
 
     }else if(data['action'] == 'driver_on_the_way'){
       notificationToRouteNavigate(data['ride_request_id'], formSplash);

@@ -13,7 +13,7 @@ abstract class WalletRepositoryInterface implements RepositoryInterface{
   Future<Response?> createWithdrawMethodInfo(List <String> typeKey, List<String> typeValue,int id);
   Future<Response?> updateWithdrawMethodInfo(List <String> typeKey, List<String> typeValue,int methodId, String methodInfoId);
   Future<Response?> deleteWithdrawMethodInfo(String methodId);
-  Future<Response?> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note);
+  Future<Response?> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note, {String? methodInfoId});
   Future<Response> getPayableHistoryList(int offset);
   Future<Response> getWalletHistoryList(int offset);
   Future<Response> getIncomeStatement(int offset);

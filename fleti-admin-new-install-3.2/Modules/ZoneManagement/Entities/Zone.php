@@ -113,19 +113,29 @@ class Zone extends Model
         parent::boot();
 
         static::deleted(function ($item) {
-            $array = [];
-
-            foreach ($item->changes as $key => $change) {
-                if ($key=="coordinates"){
-                    $array[$key] = json_decode($item->original[$key],true);
-                }else{
-                    $array[$key] = $item->original[$key];
-                }
+            if (! auth()->check()) {
+                return;
             }
-            $log = new ActivityLog();
-            $log->edited_by = auth()->user()->id;
-            $log->before = $array;
-            $item->logs()->save($log);
+
+            try {
+                $before = [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'readable_id' => $item->readable_id,
+                    'is_active' => $item->is_active,
+                ];
+
+                if ($item->coordinates) {
+                    $before['coordinates'] = json_decode($item->coordinates->toJson(), true);
+                }
+
+                $log = new ActivityLog();
+                $log->edited_by = (string) (auth()->user()->id ?? 'system');
+                $log->before = $before;
+                $item->logs()->save($log);
+            } catch (\Throwable $e) {
+                report($e);
+            }
         });
 
     }

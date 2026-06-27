@@ -32,7 +32,7 @@
                                 name="notification[{{ $group . '_' . $notification->name }}][value]" tabindex="1"
                                 id="{{ $group . '_' . $notification->name }}" rows="4"
                                 class="form-control color-border-focus {{ $notification?->value ? 'color-border' : '' }} fw-medium"
-                                placeholder="Type Here ...">{{ $notification?->value }}</textarea>
+                                placeholder="{{ translate('Type Here ...') }}">{{ pushNotificationAdminValue($notification) }}</textarea>
                         </div>
                     </div>
 

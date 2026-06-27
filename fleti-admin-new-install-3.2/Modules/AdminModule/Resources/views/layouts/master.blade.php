@@ -67,7 +67,10 @@
 
 <body class="fleti-admin-v4">
 <script>
-    localStorage.theme && document.querySelector('body').setAttribute("theme", localStorage.theme);
+    if (localStorage.theme) {
+        document.documentElement.setAttribute("theme", localStorage.theme);
+        document.body.setAttribute("theme", localStorage.theme);
+    }
     localStorage.dir && document.querySelector('html').setAttribute("dir", localStorage.dir);
 </script>
 
@@ -144,7 +147,14 @@
 <script src="{{ dynamicAsset('public/assets/admin-module/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ dynamicAsset('public/assets/admin-module/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 <script src="{{ dynamicAsset('public/assets/admin-module/plugins/select2/select2.min.js') }}"></script>
+<script>
+window.fletiCalendarConfig = @json(fletiCalendarConfig());
+</script>
 <script src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment.min.js')}}"></script>
+@if(session('locale', 'en') === 'pt')
+<script src="{{ dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment-locale-pt-br.js') }}"></script>
+@endif
+<script src="{{ dynamicAsset('public/assets/admin-module/js/daterangepicker-setup.js') }}"></script>
 <script src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/daterangepicker.min.js')}}"></script>
 <script src="{{dynamicAsset('public/assets/admin-module/plugins/tags-input/tags-input.min.js')}}"></script>
 {{-- TOASTR and SWEETALERT --}}
@@ -2008,6 +2018,14 @@
 
 @stack('script')
 @stack('script2')
+@if(session('locale', 'en') === 'pt')
+<script src="{{ dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment-locale-pt-br.js') }}"></script>
+@endif
+<script>
+if (window.FletiDatePicker) {
+    window.FletiDatePicker.initMomentLocale();
+}
+</script>
 
 </body>
 

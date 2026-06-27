@@ -230,3 +230,23 @@
     padding: var(--fleti-space-md);
   }
 }
+
+[theme="dark"] {
+  --fleti-border: rgba(255, 255, 255, 0.1);
+  --fleti-surface: #232325;
+  --fleti-muted: #969697;
+}
+
+[theme="dark"] .fleti-table thead th {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[theme="dark"] .fleti-status-badge--warning {
+  background: rgba(230, 126, 34, 0.15);
+  color: #f0a060;
+}
+
+[theme="dark"] .fleti-status-badge--neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fleti-muted);
+}

@@ -62,6 +62,7 @@
                                             action="{{ route('admin.business.setup.chatting-setup.question-answer.store') }}"
                                             method="post">
                                             @csrf
+                                            <input type="hidden" name="question_answer_for" value="{{ DRIVER }}">
                                             <div class="col-md-12">
                                                 <div class="p-lg-4 p-3 rounded bg-F6F6F6">
                                                     <div class="row g-3">
@@ -225,6 +226,7 @@
                         </div>
                     </div>
                 </div>
+                @include('businessmanagement::admin.business-setup.partials._chatting-setup-customer-tab')
                 <div
                     class="tab-pane fade {{Request::is('admin/business/setup/chatting-setup/support') ? 'show active' : ''}}"
                     id="support">

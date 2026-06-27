@@ -1,6 +1,8 @@
 import 'package:camera/camera.dart';
+import 'package:ride_sharing_user_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,14 +36,9 @@ Future<void> main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-  if(GetPlatform.isAndroid) {
+  if (GetPlatform.isAndroid || GetPlatform.isIOS) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyCFGqSEiWMItei_AFIUgdM53PWrvyGmjFY",
-        appId: "1:76471554747:android:28346318a6d400326d0f9e",
-        messagingSenderId: "76471554747",
-        projectId: "drivevalley-fdb7f",
-      ),
+      options: DefaultFirebaseOptions.currentPlatform,
     );
   } else {
     await Firebase.initializeApp();
@@ -58,7 +55,10 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  await FlutterDownloader.initialize(
+    debug: kDebugMode,
+    ignoreSsl: kDebugMode,
+  );
 
 
   runApp(MyApp(languages: languages, notificationData: remoteMessage?.data));

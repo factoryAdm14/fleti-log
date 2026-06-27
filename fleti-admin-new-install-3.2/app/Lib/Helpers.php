@@ -64,6 +64,90 @@ if (!function_exists('translate')) {
         }
     }
 }
+
+if (!function_exists('fletiCalendarConfig')) {
+    function fletiCalendarConfig(): array
+    {
+        $adminLocale = session('locale', 'en');
+        $isPtLocale = $adminLocale === 'pt';
+
+        return [
+            'locale' => $adminLocale,
+            'momentLocale' => $isPtLocale ? 'pt-br' : 'en',
+            'dateFormat' => $isPtLocale ? 'DD/MM/YYYY' : 'MM/DD/YYYY',
+            'weekdaysMin' => $isPtLocale
+                ? ['Do', 'Se', 'Te', 'Qa', 'Qi', 'Se', 'Sá']
+                : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            'labels' => [
+                'today' => translate('Today'),
+                'yesterday' => translate('Previous_Day'),
+                'last7Days' => translate('Last_7_Days'),
+                'last30Days' => translate('Last_30_Days'),
+                'thisMonth' => translate('This_Month'),
+                'lastMonth' => translate('Last_Month'),
+                'custom' => translate('Custom'),
+                'apply' => translate('Apply'),
+                'cancel' => translate('Clear'),
+                'from' => translate('From'),
+                'to' => translate('To'),
+                'selectDate' => translate('Select Date'),
+                'selectTime' => translate('Select Time'),
+            ],
+        ];
+    }
+}
+
+if (!function_exists('pushNotificationAdminValue')) {
+    function pushNotificationAdminValue(object $notification): string
+    {
+        $value = (string) ($notification->value ?? '');
+        if ($value === '') {
+            return '';
+        }
+
+        return (string) translate($value);
+    }
+}
+
+if (!function_exists('pushNotificationNormalizeSubmittedValue')) {
+    function pushNotificationNormalizeSubmittedValue(object $notification, string $submitted): string
+    {
+        $original = (string) ($notification->value ?? '');
+        $submitted = trim($submitted);
+
+        if ($submitted === '' || $submitted === $original) {
+            return $original;
+        }
+
+        if (session('locale', 'en') !== 'en') {
+            $translated = trim((string) translate($original));
+            if ($submitted === $translated) {
+                return $original;
+            }
+        }
+
+        return $submitted;
+    }
+}
+
+if (!function_exists('transactionTrxTypeLabel')) {
+    function transactionTrxTypeLabel(?string $trxType): string
+    {
+        if ($trxType === null || $trxType === '') {
+            return (string) translate('N/A');
+        }
+
+        if (preg_match('/^Bonus for transaction: (.+) added to wallet balance$/', $trxType, $matches)) {
+            return (string) translate(
+                'Bonus for transaction: {transactionId} added to wallet balance',
+                replace: ['transactionId' => $matches[1]]
+            );
+        }
+
+        return (string) translate($trxType);
+    }
+}
+
 if (!function_exists('defaultLang')) {
     function defaultLang(): string
     {
@@ -778,7 +862,9 @@ if (!function_exists('getMainDomain')) {
 if (!function_exists('getRoutes')) {
     function getRoutes(array $originCoordinates, array $destinationCoordinates, array $intermediateCoordinates = [], array $drivingMode = ["DRIVE"]): array
     {
-        $mapApiKey = businessConfig(GOOGLE_MAP_API)?->value['map_api_key_server'] ?? '';
+        $mapApiKey = businessConfig(GOOGLE_MAP_API)?->value['map_api_key_server']
+            ?? businessConfig(GOOGLE_MAP_API)?->value['map_api_key']
+            ?? '';
         $url = "https://routes.googleapis.com/directions/v2:computeRoutes";
 
         $origin = [
@@ -886,6 +972,38 @@ if (!function_exists('getRoutes')) {
         } else {
             return ['error' => 'API request failed', 'status' => $response->status(), 'details' => $response];
         }
+    }
+}
+if (!function_exists('resolveTripRoutePolyline')) {
+    function resolveTripRoutePolyline($trip): ?string
+    {
+        if (filled($trip->encoded_polyline ?? null)) {
+            return $trip->encoded_polyline;
+        }
+
+        $pickup = $trip->coordinate?->pickup_coordinates;
+        $destination = $trip->coordinate?->destination_coordinates;
+
+        if (!$pickup || !$destination) {
+            return null;
+        }
+
+        $routes = getRoutes(
+            originCoordinates: [$pickup->latitude, $pickup->longitude],
+            destinationCoordinates: [$destination->latitude, $destination->longitude],
+        );
+
+        if (!is_array($routes) || isset($routes['error'])) {
+            return null;
+        }
+
+        foreach ($routes as $route) {
+            if (($route['drive_mode'] ?? null) === 'DRIVE' && !empty($route['encoded_polyline'])) {
+                return $route['encoded_polyline'];
+            }
+        }
+
+        return $routes[0]['encoded_polyline'] ?? null;
     }
 }
 if (!function_exists('onErrorImage')) {
@@ -1763,8 +1881,58 @@ if (!function_exists('isOtpEnabled')) {
     }
 }
 
+if (!function_exists('fletiBusinessPageShortDescription')) {
+    function fletiBusinessPageShortDescription(?array $pageValue, string $pageKey): string
+    {
+        $short = trim((string) ($pageValue['short_description'] ?? ''));
+        if ($short !== '') {
+            return $short;
+        }
 
+        return \App\Lib\FletiLegalPagesContent::renderShort($pageKey);
+    }
+}
 
+if (!function_exists('fletiBusinessPageHtml')) {
+    function fletiBusinessPageHtml(?array $pageValue, string $pageKey): string
+    {
+        $html = trim((string) ($pageValue['long_description'] ?? ''));
+        if ($html !== '') {
+            return $html;
+        }
 
+        return \App\Lib\FletiLegalPagesContent::render($pageKey);
+    }
+}
+
+if (!function_exists('legalConsentRequired')) {
+    function legalConsentRequired(): bool
+    {
+        $config = businessConfig('legal_consent_required', BUSINESS_INFORMATION);
+        if ($config === null) {
+            return true;
+        }
+
+        $value = $config->value;
+        if (is_array($value)) {
+            $value = $value[0] ?? reset($value);
+        }
+
+        return !in_array($value, [0, '0', false, 'false', null, ''], true);
+    }
+}
+
+if (!function_exists('fletiLegalPageUrls')) {
+    function fletiLegalPageUrls(): array
+    {
+        return [
+            'terms' => route('terms'),
+            'privacy' => route('privacy'),
+            'legal' => route('legal'),
+            'refund_policy' => route('refund-policy'),
+            'about_us' => route('about-us'),
+        ];
+    }
+}
 
 

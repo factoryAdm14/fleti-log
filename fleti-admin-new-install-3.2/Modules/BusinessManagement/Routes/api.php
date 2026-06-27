@@ -35,6 +35,7 @@ Route::group(['prefix' => 'customer'], function () {
             Route::get('safety-alert-reason-list', 'safetyAlertReasonList');
             Route::get('safety-precaution-list', 'safetyPrecautionList');
             Route::get('calculate-distance', 'calculateDistance');
+            Route::get('predefined-question-answer-list', 'predefinedQuestionAnswerList');
         });
     });
 });

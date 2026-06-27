@@ -114,7 +114,7 @@ class TripController extends BaseController
     {
         $this->authorize('trip_view');
 
-        $trip = $this->tripRequestService->findOne(id: $id, relations: ['customer', 'driver', 'tripStatus', 'parcelRefund.refundProofs', 'parcel.parcelCategory'], withTrashed: true);
+        $trip = $this->tripRequestService->findOne(id: $id, relations: ['customer', 'driver', 'tripStatus', 'coordinate', 'proofImage', 'parcelRefund.refundProofs', 'parcel.parcelCategory'], withTrashed: true);
         $safetyAlerts = $this->safetyAlertService->getBy(criteria: ['trip_request_id' => $id], relations: ['sentBy', 'solvedBy', 'trip', 'lastLocation'], orderBy: ['created_at' => 'desc']);
         if (!$trip) {
             Toastr::error(TRIP_REQUEST_404['message']);
@@ -125,7 +125,9 @@ class TripController extends BaseController
             return view('tripmanagement::admin.trip.log', compact('trip'));
         }
 
-        return view('tripmanagement::admin.trip.details', compact('trip', 'safetyAlerts'));
+        $routePolyline = resolveTripRoutePolyline($trip);
+
+        return view('tripmanagement::admin.trip.details', compact('trip', 'safetyAlerts', 'routePolyline'));
     }
 
     public function destroy($id)

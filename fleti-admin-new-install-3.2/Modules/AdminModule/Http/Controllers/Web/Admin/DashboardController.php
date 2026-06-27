@@ -138,9 +138,17 @@ class DashboardController extends BaseController
     public function zoneWiseStatistics(Request $request)
     {
         $data = $this->tripRequestService->getAdminZoneWiseStatistics(data: $request->all());
+        $activeZones = \Modules\ZoneManagement\Entities\Zone::query()->where('is_active', 1)->count();
+        $inactiveZones = \Modules\ZoneManagement\Entities\Zone::query()->where('is_active', 0)->count();
+        $totalZones = $activeZones + $inactiveZones;
         return response()
-            ->json(view('adminmodule::partials.dashboard._areawise-statistics', ['trips' => $data['zoneTripsByDate'], 'totalCount' => $data['totalTrips']])
-                ->render());
+            ->json(view('adminmodule::partials.dashboard._areawise-statistics', [
+                'trips' => $data['zoneTripsByDate'],
+                'totalCount' => $data['totalTrips'],
+                'activeZones' => $activeZones,
+                'inactiveZones' => $inactiveZones,
+                'totalZones' => $totalZones,
+            ])->render());
     }
 
     public function heatMap(?Request $request)
@@ -431,9 +439,10 @@ class DashboardController extends BaseController
     {
         $this->authorize('chatting_view');
         $driverList = $this->driverService->getChattingDriverList(data: $request->all());
+        $customerList = $this->customerService->getChattingCustomerList(data: $request->all());
         $savedReplies = $this->supportSavedReplyService->getBy(criteria: ['is_active' => 1]);
 
-        return view('adminmodule::chatting', compact('driverList', 'savedReplies'));
+        return view('adminmodule::chatting', compact('driverList', 'customerList', 'savedReplies'));
 
     }
 
@@ -521,6 +530,85 @@ class DashboardController extends BaseController
 
     }
 
+    public function getCustomerConversation($channelId, Request $request)
+    {
+        $this->channelUserService->updatedBy(criteria: ['channel_id' => $channelId, 'user_id' => $request->customerId, 'is_read' => 0], data: ['is_read' => 1]);
+        $this->channelConversationService->updatedBy(criteria: ['channel_id' => $channelId, 'user_id' => $request->customerId, 'is_read' => 0], data: ['is_read' => 1]);
+        $conversations = $this->channelConversationService->getBy(
+            criteria: ['channel_id' => $channelId],
+            relations: ['user', 'conversation_files', 'serviceRequest'],
+            orderBy: ['id' => 'desc']
+        );
+        $customer = $this->customerService->findOneBy(criteria: ['id' => $request->customerId, 'user_type' => CUSTOMER], withTrashed: true);
+
+        return response()
+            ->json(view('adminmodule::partials.chatting._conversation-customer', compact('conversations', 'customer', 'channelId'))
+                ->render());
+    }
+
+    public function searchCustomersList(Request $request)
+    {
+        $customerList = $this->customerService->getChattingCustomerList(data: $request->all());
+
+        return response()
+            ->json(view('adminmodule::partials.chatting._search-customers', compact('customerList'))
+                ->render());
+    }
+
+    public function sendMessageToCustomer(StoreSendMessageRequest $request)
+    {
+        $fileImage = [];
+        if ($request->has('file')) {
+            $fileImage = array_merge($fileImage, $request->file('file'));
+        }
+        if ($request->has('image')) {
+            $fileImage = array_merge($fileImage, $request->file('image'));
+        }
+        $data = [
+            'channel_id' => $request->channelId,
+            'user_id' => auth()->user()->id,
+            'message' => $request->message,
+            'is_read' => 0,
+            'files' => $fileImage,
+        ];
+        $dataCreated = $this->channelConversationService->create(data: $data);
+        $sentTime = pushSentTime($dataCreated->created_at);
+        $channelCustomer = $this->channelUserService->findOneBy(criteria: ['channel_id' => $request->channelId, 'user_id' => $request->customerId], relations: ['user']);
+        $customer = $this->customerService->findOne(id: $request->customerId);
+
+        $push = getNotification('admin_message');
+        sendDeviceNotification(
+            fcm_token: $channelCustomer?->user?->fcm_token,
+            title: translate(key: $push['title'], locale: $customer->current_language_key),
+            description: textVariableDataFormat(
+                value: $push['description'],
+                sentTime: $sentTime,
+                customerName: $customer->first_name,
+                locale: $customer->current_language_key
+            ),
+            status: 1,
+            ride_request_id: $request->customerId,
+            type: $request->channelId,
+            notification_type: 'chatting',
+            action: $push['action'],
+            user_id: $request->customerId,
+        );
+
+        $channelId = $request->channelId;
+        $this->channelUserService->updatedBy(criteria: ['channel_id' => $channelId, 'user_id' => $request->customerId, 'is_read' => 0], data: ['is_read' => 1]);
+        $this->channelConversationService->updatedBy(criteria: ['channel_id' => $channelId, 'user_id' => $request->customerId, 'is_read' => 0], data: ['is_read' => 1]);
+        $conversations = $this->channelConversationService->getBy(
+            criteria: ['channel_id' => $channelId],
+            relations: ['user', 'conversation_files', 'serviceRequest'],
+            orderBy: ['created_at' => 'desc']
+        );
+        $customer = $this->customerService->findOneBy(criteria: ['id' => $request->customerId, 'user_type' => CUSTOMER], withTrashed: true);
+
+        return response()
+            ->json(view('adminmodule::partials.chatting._conversation-customer', compact('conversations', 'customer', 'channelId'))
+                ->render());
+    }
+
     public function createChannelWithAdmin(Request $request)
     {
         $channelIds = $this->channelUserService->getBy(criteria: ['user_id' => $request->driverId]);
@@ -542,6 +630,30 @@ class DashboardController extends BaseController
             }
         }
         $channel = $this->channelListService->createChannelWithAdmin(data: ['to' => $request->driverId]);
+        return response()->json(responseFormatter(DEFAULT_STORE_200, ['user' => auth()->user(), 'channel' => ChannelListResource::make($channel)]), 200);
+    }
+
+    public function createChannelWithCustomer(Request $request)
+    {
+        $channelIds = $this->channelUserService->getBy(criteria: ['user_id' => $request->customerId]);
+        $channelIds = $channelIds->pluck('channel_id')->toArray();
+
+        $whereInCriteria = [
+            'channel_id' => $channelIds
+        ];
+        $criteria = [
+            'user_id' => auth()->user()->id,
+        ];
+
+        $channelUser = $this->channelUserService->findOneBy(criteria: $criteria, whereInCriteria: $whereInCriteria);
+        if ($channelUser) {
+            $findChannel = $this->channelListService->findOne($channelUser?->channel_id);
+            if ($findChannel) {
+                $findChannel = $this->channelListService->update(id: $findChannel?->id, data: $request->all());
+                return response()->json(responseFormatter(DEFAULT_200, ['user' => auth()->user(), 'channel' => ChannelListResource::make($findChannel)]), 200);
+            }
+        }
+        $channel = $this->channelListService->createChannelWithAdmin(data: ['to' => $request->customerId]);
         return response()->json(responseFormatter(DEFAULT_STORE_200, ['user' => auth()->user(), 'channel' => ChannelListResource::make($channel)]), 200);
     }
 

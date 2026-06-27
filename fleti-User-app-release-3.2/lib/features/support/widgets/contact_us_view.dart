@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:ride_sharing_user_app/helper/svg_image_helper.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/controllers/help_and_support_controller.dart';
 import 'package:ride_sharing_user_app/util/dimensions.dart';
 import 'package:ride_sharing_user_app/util/images.dart';
 import 'package:ride_sharing_user_app/features/splash/controllers/config_controller.dart';
@@ -119,6 +120,35 @@ class ContactUsView extends StatelessWidget {
               ]),
             )
         ),
+
+        if (Get.find<ConfigController>().config?.customerChattingSetupStatus ?? false) ...[
+          const SizedBox(height: Dimensions.paddingSizeLarge),
+          Text('want_to_chat_with_us'.tr, style: textBold),
+          const SizedBox(height: Dimensions.paddingSizeSmall),
+          InkWell(
+            onTap: () => Get.find<HelpAndSupportController>().createChannel(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
+                color: Theme.of(context).cardColor,
+                boxShadow: [BoxShadow(color: Theme.of(context).hintColor.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 1))],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeSmall, horizontal: Dimensions.paddingSizeDefault),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('chat_with_support'.tr, style: textRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
+                    boxShadow: [BoxShadow(color: Theme.of(context).hintColor.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 1))],
+                  ),
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                  child: Image.asset(Images.chatIcon, height: 16, width: 16),
+                ),
+              ]),
+            ),
+          ),
+        ],
 
       ]),
     );

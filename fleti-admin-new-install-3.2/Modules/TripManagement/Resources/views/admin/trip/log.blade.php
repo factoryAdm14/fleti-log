@@ -33,7 +33,7 @@
                                 <div class="d-flex flex-column gap-2">
                                     <h4 class="text-primary">{{translate('payment')}}</h4>
                                     @if(!is_null($trip->payment_method))
-                                        <div class="fs-12 text-capitalize">{{$trip->payment_method}}</div>
+                                        <div class="fs-12 text-capitalize">{{ translate($trip->payment_method) }}</div>
                                     @else
                                         <div class="fs-12 text-capitalize">{{translate('payment_not_selected')}}</div>
                                     @endif

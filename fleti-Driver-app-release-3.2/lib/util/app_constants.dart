@@ -75,6 +75,13 @@ class AppConstants {
   static const String payableListUri = '/api/driver/transaction/payable-list?limit=10&offset=';
   static const String withdrawPendingListUri = '/api/driver/withdraw/pending-request?limit=10&offset=';
   static const String withdrawSettledListUri = '/api/driver/withdraw/settled-request?limit=10&offset=';
+  static const String financeWithdrawRequestUri = '/api/driver/finance/withdraw/request';
+  static const String financeWithdrawPendingUri = '/api/driver/finance/withdraw/pending?limit=10&offset=';
+  static const String financeWithdrawSettledUri = '/api/driver/finance/withdraw/settled?limit=10&offset=';
+  static const String financeWalletUri = '/api/driver/finance/wallet';
+  static const String financeWalletTransactionsUri = '/api/driver/finance/wallet/transactions?limit=10&offset=';
+  static const String financePlansUri = '/api/driver/finance/plans';
+  static const String financeSubscriptionUri = '/api/driver/finance/subscription';
   static const String cashCollectHistoryList = '/api/driver/transaction/cash-collect-list?limit=10&offset=';
   static const String walletListUri = '/api/driver/transaction/wallet-list?limit=10&offset=';
   static const String withdrawMethodDelete = '/api/driver/withdraw-method-info/delete/';
@@ -160,7 +167,7 @@ class AppConstants {
 
   static List<LanguageModel> languages = [
     LanguageModel(imageUrl: Images.unitedKingdom, languageName: 'English', countryCode: 'US', languageCode: 'en'),
-    LanguageModel(imageUrl: Images.saudi, languageName: 'عربي', countryCode: 'SA', languageCode: 'ar'),
+    LanguageModel(imageUrl: Images.brazil, languageName: 'Português (BR)', countryCode: 'BR', languageCode: 'pt'),
   ];
 
   static const int imageQuality = 80;

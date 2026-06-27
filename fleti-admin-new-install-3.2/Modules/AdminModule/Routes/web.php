@@ -48,10 +48,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], f
         Route::get('zone-wise-statistics', 'zoneWiseStatistics')->name('zone-wise-statistics');
         Route::get('chatting', 'chatting')->name('chatting');
         Route::get('driver-conversation/{channelId}', 'getDriverConversation')->name('driver-conversation');
+        Route::get('customer-conversation/{channelId}', 'getCustomerConversation')->name('customer-conversation');
         Route::post('send-message-to-driver', 'sendMessageToDriver')->name('send-message-to-driver');
+        Route::post('send-message-to-customer', 'sendMessageToCustomer')->name('send-message-to-customer');
         Route::get('search-drivers', 'searchDriversList')->name('search-drivers');
+        Route::get('search-customers', 'searchCustomersList')->name('search-customers');
         Route::get('search-saved-topic-answers', 'searchSavedTopicAnswer')->name('search-saved-topic-answers');
         Route::put('create-channel-with-admin', 'createChannelWithAdmin')->name('create-channel-with-admin');
+        Route::put('create-channel-with-customer', 'createChannelWithCustomer')->name('create-channel-with-customer');
     });
     Route::controller(ActivityLogController::class)->group(function () {
         Route::get('log', 'log')->name('log');

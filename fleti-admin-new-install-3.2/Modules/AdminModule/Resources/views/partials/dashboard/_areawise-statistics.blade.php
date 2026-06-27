@@ -38,8 +38,13 @@
     @else
         <div class="d-flex flex-column gap-2 justify-content-center align-items-center py-5 text-center">
             <div><img src="{{ dynamicAsset("public/assets/admin-module/img/map-marker-question.png") }}" alt=""></div>
-            <div class="fs-16">{{ translate("No Zone Found") }}</div>
-            <div>{{ translate("Currently there are no zone is active in your system.") }}</div>
+            @if(($totalZones ?? 0) > 0 && ($activeZones ?? 0) === 0)
+                <div class="fs-16">{{ translate("zones_are_inactive") }}</div>
+                <div>{{ translate("you_have_inactive_zones_activate_them_in_zone_setup") }}</div>
+            @else
+                <div class="fs-16">{{ translate("No Zone Found") }}</div>
+                <div>{{ translate("Currently there are no zone is active in your system.") }}</div>
+            @endif
             <div><a class="text-primary text-decoration-underline" href="{{route("admin.zone.index")}}">{{ translate("Go to Zone setup") }}</a></div>
         </div>
     @endif

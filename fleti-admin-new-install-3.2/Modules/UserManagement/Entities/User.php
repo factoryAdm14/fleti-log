@@ -54,14 +54,24 @@ class User extends Authenticatable
         'deleted_at',
         'created_at',
         'updated_at',
-        'logged_in_via'
+        'logged_in_via',
+        'terms_accepted_at',
+        'privacy_accepted_at',
+        'location_consent_at',
+        'marketing_consent_at',
+        'terms_version',
+        'privacy_version',
     ];
 
     protected $casts = [
         'identification_image' => 'array',
         'old_identification_image' => 'array',
         'other_documents' => 'array',
-        'loyalty_points' => 'double'
+        'loyalty_points' => 'double',
+        'terms_accepted_at' => 'datetime',
+        'privacy_accepted_at' => 'datetime',
+        'location_consent_at' => 'datetime',
+        'marketing_consent_at' => 'datetime',
     ];
 
     protected static function newFactory()

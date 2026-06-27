@@ -60,7 +60,7 @@ class MercadoPagoPixService
                 'description' => 'Fleti ' . substr($payment->id, 0, 8),
                 'payment_method_id' => 'pix',
                 'external_reference' => $payment->id,
-                'notification_url' => route('mercadopago_pix.webhook'),
+                'notification_url' => $this->webhookNotificationUrl(),
                 'payer' => [
                     'email' => $payer->email ?? 'noemail@fleti.com.br',
                     'first_name' => $payer->name ?? 'Cliente',
@@ -195,6 +195,7 @@ class MercadoPagoPixService
             'ticket_url' => $transactionData['ticket_url'] ?? null,
             'expires_at' => $mpPayment['date_of_expiration'] ?? null,
             'amount' => $mpPayment['transaction_amount'] ?? null,
+            'gateway_fee' => $this->extractGatewayFee($mpPayment),
         ];
     }
 
@@ -223,6 +224,27 @@ class MercadoPagoPixService
         return $additional['pix'] ?? [];
     }
 
+    private function extractGatewayFee(array $mpPayment): float
+    {
+        $feeDetails = $mpPayment['fee_details'] ?? [];
+        $total = 0.0;
+
+        foreach ($feeDetails as $fee) {
+            $total += (float) ($fee['amount'] ?? 0);
+        }
+
+        return round($total, 2);
+    }
+
+    private function webhookNotificationUrl(): string
+    {
+        if (\Illuminate\Support\Facades\Route::has('finance.webhooks.pix')) {
+            return route('finance.webhooks.pix', ['gateway' => 'mercadopago_pix']);
+        }
+
+        return route('mercadopago_pix.webhook');
+    }
+
     private function persistPixMeta(PaymentRequest $payment, array $pixData): void
     {
         $additional = json_decode($payment->additional_data, true) ?? [];
@@ -234,6 +256,16 @@ class MercadoPagoPixService
     private function markAsPaid(PaymentRequest $payment, string $mpPaymentId): void
     {
         if ($payment->is_paid) {
+            if (class_exists(\Modules\FinanceManagement\Service\FinanceAuditService::class)) {
+                app(\Modules\FinanceManagement\Service\FinanceAuditService::class)->logSystem(
+                    action: 'payment_webhook_duplicate',
+                    entityType: PaymentRequest::class,
+                    entityId: (string) $payment->id,
+                    after: ['mp_payment_id' => $mpPaymentId],
+                    notes: 'Webhook duplicado ignorado (Mercado Pago PIX)',
+                );
+            }
+
             return;
         }
 

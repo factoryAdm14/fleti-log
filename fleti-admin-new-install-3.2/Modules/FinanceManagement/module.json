@@ -1,0 +1,13 @@
+{
+    "name": "FinanceManagement",
+    "alias": "financemanagement",
+    "description": "Módulo financeiro Fleti: split, carteira, planos e auditoria",
+    "keywords": ["finance", "wallet", "split", "subscription"],
+    "priority": 0,
+    "providers": [
+        "Modules\\FinanceManagement\\Providers\\FinanceManagementServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

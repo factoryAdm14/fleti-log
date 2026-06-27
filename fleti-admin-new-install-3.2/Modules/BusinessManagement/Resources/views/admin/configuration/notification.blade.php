@@ -104,7 +104,7 @@
                                         <textarea name="notification[{{ $notification->name }}][value]"
                                                   id="trip_req_message" rows="4"
                                                   class="form-control color-border-focus {{ $notification?->value ? 'color-border' : '' }} fw-medium"
-                                                  placeholder="Type Here ...">{{ $notification?->value }}</textarea>
+                                                  placeholder="{{ translate('Type Here ...') }}">{{ pushNotificationAdminValue($notification) }}</textarea>
                                     </div>
                                 </div>
                             @empty

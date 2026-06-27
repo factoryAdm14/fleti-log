@@ -207,11 +207,15 @@ class LanguageSettingService extends BaseService implements Interfaces\LanguageS
                 session()->put('locale', $singleLanguage['code']);
                 session()->put('direction', $singleLanguage['direction'] ?? 'ltr');
             } else {
+                $status = $singleLanguage['status'];
+                if ($singleLanguage['code'] === 'en' && $data['code'] === 'pt') {
+                    $status = 0;
+                }
                 $lang = [
                     'id' => $singleLanguage['id'],
                     'direction' => $singleLanguage['direction'] ?? 'ltr',
                     'code' => $singleLanguage['code'],
-                    'status' => $singleLanguage['status'],
+                    'status' => $status,
                     'default' => false,
                 ];
                 $lang_array[] = $lang;

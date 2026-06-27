@@ -1,3 +1,4 @@
+import 'package:ride_sharing_user_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
@@ -21,17 +22,12 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if(GetPlatform.isAndroid) {
+  if (GetPlatform.isAndroid || GetPlatform.isIOS) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyCFGqSEiWMItei_AFIUgdM53PWrvyGmjFY",
-        appId: "1:76471554747:android:9fb5d198e81cd2b26d0f9e",
-        messagingSenderId: "76471554747",
-        projectId: "drivevalley-fdb7f",
-      ),
+      options: DefaultFirebaseOptions.currentPlatform,
     );
   } else {
-  await Firebase.initializeApp();
+    await Firebase.initializeApp();
   }
 
   Map<String, Map<String, String>> languages = await di.init();

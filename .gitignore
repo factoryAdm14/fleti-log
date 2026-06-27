@@ -9,6 +9,7 @@ Thumbs.db
 !.env.example
 **/backup/**/.env
 DEPLOYMENT_CREDENTIALS.local.md
+scripts/demo_accounts.local.json
 
 # Laravel
 fleti-admin-new-install-3.2/vendor/

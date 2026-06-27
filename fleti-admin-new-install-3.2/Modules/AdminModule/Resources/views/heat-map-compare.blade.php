@@ -235,9 +235,6 @@
 
 @push('script')
     <script src="{{dynamicAsset('public/assets/admin-module/plugins/apex/apexcharts.min.js')}}"></script>
-    <script type="text/javascript"
-            src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/moment.min.js')}}"></script>
-    <script src="{{dynamicAsset('public/assets/admin-module/plugins/daterangepicker/daterangepicker.min.js')}}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/plugins/swiper@11/swiper-bundle.min.js')}}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/js/date-range-picker.js')}}"></script>
     <script src="{{dynamicAsset('public/assets/admin-module/js/maps/map-init.js')}}"></script>
@@ -403,7 +400,8 @@
                     start = moment('2023-10-01');
                     end = moment();
                 }
-                $dateRangePicker.val(start.format('MM/DD/YYYY') + ' - ' + end.format('MM/DD/YYYY'));
+                const dateFormat = window.FletiDatePicker?.getDateFormat?.() || 'MM/DD/YYYY';
+                $dateRangePicker.val(start.format(dateFormat) + ' - ' + end.format(dateFormat));
             }
         }
 

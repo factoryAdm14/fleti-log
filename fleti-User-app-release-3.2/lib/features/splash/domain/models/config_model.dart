@@ -85,6 +85,8 @@ class ConfigModel {
   CustomerLoginOptions? customerLoginOptions;
   bool? isRealTimeLocationShareEnable;
   bool? isFemaleRideServiceActive;
+  bool? customerChattingSetupStatus;
+  bool? customerQuestionAnswerStatus;
   List<AdditionalFieldModel>? additionalFieldList;
 
   ConfigModel(
@@ -170,6 +172,8 @@ class ConfigModel {
         this.customerLoginOptions,
         this.isRealTimeLocationShareEnable,
         this.isFemaleRideServiceActive,
+        this.customerChattingSetupStatus,
+        this.customerQuestionAnswerStatus,
         this.additionalFieldList
       });
 
@@ -293,6 +297,8 @@ class ConfigModel {
     customerLoginOptions = json['customer_login_options'] != null ? CustomerLoginOptions.fromJson(json['customer_login_options']) : null;
     isRealTimeLocationShareEnable = json['is_real_time_location_sharing_enabled'] != null ? (bool.tryParse(json['is_real_time_location_sharing_enabled'].toString()) ?? (json['is_real_time_location_sharing_enabled'].toString() == '1')) : null;
     isFemaleRideServiceActive = json['female_only_ride_service'] != null ? (bool.tryParse(json['female_only_ride_service'].toString()) ?? (json['female_only_ride_service'].toString() == '1')) : null;
+    customerChattingSetupStatus = json['customer_chatting_setup_status'] != null ? (bool.tryParse(json['customer_chatting_setup_status'].toString()) ?? (json['customer_chatting_setup_status'].toString() == '1')) : null;
+    customerQuestionAnswerStatus = json['customer_question_answer_status'] != null ? (bool.tryParse(json['customer_question_answer_status'].toString()) ?? (json['customer_question_answer_status'].toString() == '1')) : null;
     if (json['customer_additional_registration_form_fields'] != null) {
       additionalFieldList = <AdditionalFieldModel>[];
       json['customer_additional_registration_form_fields'].forEach((v) {
@@ -306,6 +312,7 @@ class ConfigModel {
 
 class ImageBaseUrl {
   String? profileImageDriver;
+  String? profileImageAdmin;
   String? banner;
   String? vehicleCategory;
   String? vehicleModel;
@@ -323,6 +330,7 @@ class ImageBaseUrl {
 
   ImageBaseUrl(
       {this.profileImageDriver,
+        this.profileImageAdmin,
         this.banner,
         this.vehicleCategory,
         this.vehicleModel,
@@ -341,6 +349,7 @@ class ImageBaseUrl {
 
   ImageBaseUrl.fromJson(Map<String, dynamic> json) {
     profileImageDriver = json['profile_image_driver'];
+    profileImageAdmin = json['profile_image_admin'];
     banner = json['banner'];
     vehicleCategory = json['vehicle_category'];
     vehicleModel = json['vehicle_model'];

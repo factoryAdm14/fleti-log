@@ -11,7 +11,9 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Modules\AdminModule\Service\Interfaces\AdminNotificationServiceInterface;
 use Modules\BusinessManagement\Service\Interfaces\QuestionAnswerServiceInterface;
+use Modules\ChattingManagement\Entities\ChannelServiceRequest;
 use Modules\ChattingManagement\Http\Requests\StoreSendMessageRequest;
+use Modules\ChattingManagement\Http\Requests\StoreServiceRequestRequest;
 use Modules\ChattingManagement\Service\Interfaces\ChannelConversationServiceInterface;
 use Modules\ChattingManagement\Service\Interfaces\ChannelListServiceInterface;
 use Modules\ChattingManagement\Service\Interfaces\ChannelUserServiceInterface;
@@ -309,6 +311,192 @@ class ChattingController extends Controller
             ];
             $this->channelConversationService->create($attributes1);
         }
+        return response()->json(responseFormatter(DEFAULT_STORE_200), 200);
+    }
+
+    public function sendMessageToAdminFromCustomer(StoreSendMessageRequest $request): JsonResponse
+    {
+        if (auth()->user()->user_type !== CUSTOMER) {
+            return response()->json(responseFormatter(DEFAULT_401), 401);
+        }
+
+        return $this->sendMessageToAdmin($request);
+    }
+
+    public function sendPredefinedQuestionToAdminFromCustomer(Request $request): JsonResponse
+    {
+        if (auth()->user()->user_type !== CUSTOMER) {
+            return response()->json(responseFormatter(DEFAULT_401), 401);
+        }
+
+        $request->validate([
+            'channel_id' => 'required|uuid',
+            'question_id' => 'required|uuid',
+        ]);
+
+        $user = auth()->user();
+        $channel = $this->channelListService->findOneBy(criteria: ['id' => $request['channel_id']]);
+
+        if (!$channel) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        $channelUser = $this->channelUserService->findOneBy(criteria: ['channel_id' => $request['channel_id'], 'user_id' => $user->id]);
+
+        if (!$channelUser) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        $questionAnswer = $this->questionAnswerService->findOneBy(criteria: [
+            'id' => $request->question_id,
+            'question_answer_for' => CUSTOMER,
+            'is_active' => true,
+        ]);
+
+        if (!$questionAnswer) {
+            return response()->json(responseFormatter(DEFAULT_404), 404);
+        }
+
+        return $this->sendPredefinedQuestionToAdmin($request, $questionAnswer);
+    }
+
+    public function submitServiceRequestFromCustomer(StoreServiceRequestRequest $request): JsonResponse
+    {
+        if (auth()->user()->user_type !== CUSTOMER) {
+            return response()->json(responseFormatter(DEFAULT_401), 401);
+        }
+
+        $user = auth()->user();
+        $channel = $this->channelListService->findOneBy(criteria: ['id' => $request['channel_id']]);
+
+        if (!$channel) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        $channelUser = $this->channelUserService->findOneBy(criteria: ['channel_id' => $request['channel_id'], 'user_id' => $user->id]);
+
+        if (!$channelUser) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        $serviceTypeLabel = $request->service_type === 'delivery' ? translate('Delivery') : translate('Ride');
+        $message = translate('Service request') . ": {$serviceTypeLabel}\n"
+            . translate('Origin') . ": {$request->origin_address}\n"
+            . translate('Destination') . ": {$request->destination_address}";
+
+        if ($request->filled('notes')) {
+            $message .= "\n" . translate('Notes') . ": {$request->notes}";
+        }
+
+        DB::beginTransaction();
+
+        $this->channelUserService->updatedBy(
+            criteria: ['channel_id' => $request['channel_id'], ['user_id', '=', $user->id]],
+            data: ['is_read' => true]
+        );
+
+        $channelConversation = $this->channelConversationService->create([
+            'channel_id' => $request['channel_id'],
+            'message' => $message,
+            'user_id' => $user->id,
+            'is_read' => 0,
+        ]);
+
+        ChannelServiceRequest::create([
+            'channel_id' => $request['channel_id'],
+            'channel_conversation_id' => $channelConversation->id,
+            'customer_id' => $user->id,
+            'service_type' => $request->service_type,
+            'origin_address' => $request->origin_address,
+            'origin_lat' => $request->origin_lat,
+            'origin_lng' => $request->origin_lng,
+            'destination_address' => $request->destination_address,
+            'destination_lat' => $request->destination_lat,
+            'destination_lng' => $request->destination_lng,
+            'notes' => $request->notes,
+        ]);
+
+        $this->adminNotificationService->create([
+            'model' => 'channel_conversation',
+            'model_id' => $channelConversation->id,
+            'message' => 'new_message_arrived',
+        ]);
+
+        DB::commit();
+
+        return response()->json(responseFormatter(DEFAULT_STORE_200, [
+            'conversation_id' => $channelConversation->id,
+        ]), 200);
+    }
+
+    private function sendMessageToAdmin(StoreSendMessageRequest $request): JsonResponse
+    {
+        $user = auth()->user();
+        $channel = $this->channelListService->findOneBy(criteria: ['id' => $request['channel_id']]);
+
+        if (!$channel) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        $channelUser = $this->channelUserService->findOneBy(criteria: ['channel_id' => $request['channel_id'], 'user_id' => $user->id]);
+
+        if (!$channelUser) {
+            return response()->json(responseFormatter(constant: CHANNEL_NOT_FOUND_404), 403);
+        }
+
+        DB::beginTransaction();
+
+        $this->channelUserService->updatedBy(
+            criteria: ['channel_id' => $request['channel_id'], ['user_id', '=', $user->id]],
+            data: ['is_read' => true]
+        );
+
+        $attributes = [
+            'channel_id' => $request['channel_id'],
+            'message' => $request['message'],
+            'user_id' => $user->id,
+            'is_read' => 0,
+        ];
+        if ($request->has('files')) {
+            $attributes['files'] = $request->file('files');
+        }
+        $channelConversation = $this->channelConversationService->create($attributes);
+        $this->adminNotificationService->create([
+            'model' => 'channel_conversation',
+            'model_id' => $channelConversation->id,
+            'message' => 'new_message_arrived',
+        ]);
+        DB::commit();
+
+        return response()->json(responseFormatter(DEFAULT_STORE_200), 200);
+    }
+
+    private function sendPredefinedQuestionToAdmin(Request $request, $questionAnswer): JsonResponse
+    {
+        $user = auth()->user();
+        $channelUserAnother = $this->channelUserService->findOneBy(criteria: ['channel_id' => $request['channel_id'], ['user_id', '!=', $user->id]]);
+
+        $this->channelUserService->updatedBy(
+            criteria: ['channel_id' => $request['channel_id'], ['user_id', '=', $user->id]],
+            data: ['is_read' => true]
+        );
+
+        $channelConversation = $this->channelConversationService->create([
+            'channel_id' => $request['channel_id'],
+            'message' => $questionAnswer?->question,
+            'user_id' => $user->id,
+            'is_read' => 1,
+        ]);
+
+        if ($channelConversation) {
+            $this->channelConversationService->create([
+                'channel_id' => $request['channel_id'],
+                'message' => $questionAnswer?->answer,
+                'user_id' => $channelUserAnother?->user_id,
+                'is_read' => 1,
+            ]);
+        }
+
         return response()->json(responseFormatter(DEFAULT_STORE_200), 200);
     }
 

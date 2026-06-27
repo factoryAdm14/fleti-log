@@ -1,12 +1,19 @@
 "use strict";
 
 (function ($) {
+    function getInputDateFormat() {
+        return window.FletiDatePicker?.getDateFormat?.() || 'MM/DD/YYYY';
+    }
+
     function initTimeRangePicker($inputs) {
+        const picker = window.FletiDatePicker || {};
+        const labels = picker.getLabels ? picker.getLabels() : {};
+
         $inputs?.each(function () {
             const $input = $(this);
             if ($input.data('daterangepicker')) return;
 
-            const placeholder = $input.attr('placeholder') || 'Select Time';
+            const placeholder = $input.attr('placeholder') || labels.selectTime || 'Select Time';
             const initialValue = $input.val();
             let lastValue = initialValue;
 
@@ -14,7 +21,10 @@
                 timePicker: true,
                 timePicker24Hour: false,
                 timePickerIncrement: 1,
-                locale: {
+                locale: picker.getLocaleOptions ? picker.getLocaleOptions({
+                    format: 'h:mm A',
+                    cancelLabel: labels.cancel || 'Clear'
+                }) : {
                     format: 'h:mm A',
                     cancelLabel: 'Clear'
                 },
@@ -91,8 +101,9 @@
                 const rangeVal = $rangeInput.val();
                 if (rangeVal.includes(' - ')) {
                     const [start, end] = rangeVal.split(' - ');
-                    const formattedStart = moment(start, 'MM/DD/YYYY').format('D MMM, YYYY');
-                    const formattedEnd = moment(end, 'MM/DD/YYYY').format('D MMM, YYYY');
+                    const dateFormat = getInputDateFormat();
+                    const formattedStart = moment(start, dateFormat).format('D MMM, YYYY');
+                    const formattedEnd = moment(end, dateFormat).format('D MMM, YYYY');
                     $startDateEl.text(formattedStart);
                     $endDateEl.text(formattedEnd);
                     $activeWeeklyWrapper.find('input[name="date_range_weekly"]').val(formattedStart + ' - ' + formattedEnd);
@@ -144,8 +155,9 @@
             const lastDay = new Date(year, month + 1, 0);
             const firstDayIndex = firstDay.getDay();
             const numberOfDays = lastDay.getDate();
+            const bcp47 = window.FletiDatePicker?.getBcp47Locale?.() || 'en-US';
 
-            $display.text(firstDay.toLocaleString("en-US", { month: "long", year: "numeric" }));
+            $display.text(firstDay.toLocaleString(bcp47, { month: "long", year: "numeric" }));
 
             const repeatedDates = !window.activeCurrentDate
                 ? new Set(repeatedList.map(item => item.date))
@@ -206,7 +218,7 @@
                     <div class="d-flex align-items-center gap-3 flex-grow-1">
                         <div class="position-relative cursor-pointer flex-grow-1">
                             <i class="bi bi-clock icon-absolute-on-right fs-12"></i>
-                            <input type="text" value="${time}" class="form-control time-range-picker ltr text-start position-relative fs-14 h-32px bg-white" name="time_range[]" placeholder="Select Time" readonly>
+                            <input type="text" value="${time}" class="form-control time-range-picker ltr text-start position-relative fs-14 h-32px bg-white" name="time_range[]" placeholder="${(window.FletiDatePicker?.getLabels?.() || {}).selectTime || 'Select Time'}" readonly>
                         </div>
                         <button type="button" class="removeDay text-danger btn p-0 border-0">
                             <i class="tio-clear-circle-outlined fs-20"></i>
@@ -259,6 +271,9 @@
         }
 
         function init() {
+            if (window.FletiDatePicker?.applyWeekdayLabels) {
+                window.FletiDatePicker.applyWeekdayLabels($container);
+            }
             renderCalendar();
             bindNavigation();
             selectToday();
@@ -379,7 +394,7 @@
                         drp.setEndDate(endMoment);
                     }
                     $weeklyDateRangePicker.val(
-                        `${startMoment.format('MM/DD/YYYY')} - ${endMoment.format('MM/DD/YYYY')}`
+                        `${startMoment.format(getInputDateFormat())} - ${endMoment.format(getInputDateFormat())}`
                     );
                 }
             }
@@ -403,7 +418,8 @@
 
         function formatDisplayDate(dateStr) {
             const date = new Date(dateStr);
-            return date.toLocaleDateString('en-US', {
+            const bcp47 = window.FletiDatePicker?.getBcp47Locale?.() || 'en-US';
+            return date.toLocaleDateString(bcp47, {
                 weekday: 'short',
                 month: 'short',
                 day: 'numeric',
@@ -546,7 +562,7 @@
             const range = $daily.find('.date-range-picker').val();
             if (range.includes(' - ')) {
                 const [start, end] = range.split(' - ');
-                const days = calculateDateRangeDays(moment(start, 'MM/DD/YYYY'), moment(end, 'MM/DD/YYYY'));
+                const days = calculateDateRangeDays(moment(start, getInputDateFormat()), moment(end, getInputDateFormat()));
                 $daily.find('.surge_time_count').text(`${days} time${days > 1 ? 's' : ''}`);
             }
         }
@@ -587,8 +603,8 @@
 
                 const [start, end] = range.split(' - ');
                 let count = 0;
-                let current = moment(start, 'MM/DD/YYYY');
-                const last = moment(end, 'MM/DD/YYYY');
+                let current = moment(start, getInputDateFormat());
+                const last = moment(end, getInputDateFormat());
 
                 while (current.isSameOrBefore(last, 'day')) {
                     const dayName = current.format('dddd').toLowerCase();

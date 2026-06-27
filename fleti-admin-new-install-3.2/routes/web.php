@@ -32,6 +32,8 @@ Route::controller(LandingPageController::class)->group(function () {
     Route::get('/about-us', 'aboutUs')->name('about-us');
     Route::get('/privacy', 'privacy')->name('privacy');
     Route::get('/terms', 'terms')->name('terms');
+    Route::get('/legal', 'legal')->name('legal');
+    Route::get('/refund-policy', 'refundPolicy')->name('refund-policy');
 
     if (app()->environment('local') || config('app.debug')) {
         Route::get('/test-connection', function () {

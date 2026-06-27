@@ -371,6 +371,12 @@
                         </ul>
                         <!-- End Sub Menu -->
                     </li>
+                    <li class="{{Request::is('admin/driver/wallet*')? 'active open' : ''}}">
+                        <a href="{{route('admin.driver.wallet.index')}}">
+                            <i class="bi bi-wallet-fill"></i>
+                            <span class="link-title text-capitalize">{{translate('driver_wallet')}}</span>
+                        </a>
+                    </li>
                     <li class="{{Request::is('admin/customer/level*')? 'active sub-menu-opened' : ''}}">
                         <a href="">
                             <i class="bi bi-person-fill-add"></i>
@@ -573,17 +579,63 @@
                     <!---------- End Fare Management --------------->
                 @endif
 
+                <!---------- Start Finance Management --------------->
+                <li class="nav-category" title="Financeiro">Financeiro</li>
+                <li class="{{ Request::is('admin/finance/dashboard*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.dashboard.index') }}">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span class="link-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('admin/finance/audit*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.audit.index') }}">
+                        <i class="bi bi-journal-text"></i>
+                        <span class="link-title">Auditoria</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('admin/finance/settings*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.settings.index') }}">
+                        <i class="bi bi-gear"></i>
+                        <span class="link-title">Configurações</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('admin/finance/withdraws*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.withdraws.index') }}">
+                        <i class="bi bi-wallet2"></i>
+                        <span class="link-title">Saques</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('admin/finance/plans*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.plans.index') }}">
+                        <i class="bi bi-card-checklist"></i>
+                        <span class="link-title">Planos</span>
+                    </a>
+                </li>
+                <li class="{{ Request::is('admin/finance/subscriptions*') ? 'active open' : '' }}">
+                    <a href="{{ route('admin.finance.subscriptions.index') }}">
+                        <i class="bi bi-person-check"></i>
+                        <span class="link-title">Assinaturas</span>
+                    </a>
+                </li>
+                <!---------- End Finance Management --------------->
+
                 @if(\Illuminate\Support\Facades\Gate::any(['transaction_view', 'transaction_export']))
                     <!---------- Start Transaction Management --------------->
                     <li class="nav-category"
                         title="{{translate('transactions_&_reports')}}">{{translate('transactions_&_reports')}}</li>
-                    <li class="{{Request::is('admin/transaction*')? 'active open' : ''}}">
+                    <li class="{{Request::is('admin/transaction') || Request::is('admin/transaction/export') ? 'active open' : ''}}">
                         <a href="{{route('admin.transaction.index')}}">
                             <i class="bi bi-cash-stack"></i>
                             <span class="link-title text-capitalize">{{translate('transactions')}}</span>
                         </a>
                     </li>
-                    <li class="{{Request::is('admin/report*')? 'active open' : ''}}">
+                    <li class="{{Request::is('admin/transaction/pix*') ? 'active open' : ''}}">
+                        <a href="{{route('admin.transaction.pix.index')}}">
+                            <i class="bi bi-qr-code-scan"></i>
+                            <span class="link-title text-capitalize">{{translate('pix_transactions')}}</span>
+                        </a>
+                    </li>
+                    <li class="{{Request::is('admin/report*') ? 'active open' : ''}}">
                         <a href="{{route('admin.report.earning')}}">
                             <i class="bi bi-cash-stack"></i>
                             <span class="link-title text-capitalize">{{translate('reports')}}</span>

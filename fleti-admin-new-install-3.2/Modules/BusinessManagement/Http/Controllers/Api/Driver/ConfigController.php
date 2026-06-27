@@ -95,6 +95,7 @@ class ConfigController extends Controller
             'websocket_port' => (string)$info->firstWhere('key_name', 'websocket_port')?->value ?? 6001,
             'websocket_key' => env('PUSHER_APP_KEY'),
             'websocket_scheme' => env('PUSHER_SCHEME'),
+            'map_api_key' => businessConfig(GOOGLE_MAP_API)?->value['map_api_key'] ?? null,
             'review_status' => (bool)$info->firstWhere('key_name', DRIVER_REVIEW)?->value ?? null,
             'level_status' => (bool)$info->firstWhere('key_name', DRIVER_LEVEL)?->value ?? null,
             'image_base_url' => [
@@ -187,6 +188,9 @@ class ConfigController extends Controller
             'enable_parcel_delivery_proof' => (bool) (businessConfig('enable_parcel_delivery_proof', PARCEL_SETTINGS)?->value ?? 0),
             'enable_multi_stop_delivery' => (bool) (businessConfig('enable_multi_stop_delivery', PARCEL_SETTINGS)?->value ?? 0),
             'multi_stop_max_stops' => (int) (businessConfig('multi_stop_max_stops', PARCEL_SETTINGS)?->value ?? 20),
+            'legal_consent_required' => legalConsentRequired(),
+            'legal_page_urls' => fletiLegalPageUrls(),
+            'legal_document_version' => \App\Lib\FletiLegalPagesContent::VERSION,
         ];
 
         return response()->json($configs);
@@ -395,7 +399,10 @@ class ConfigController extends Controller
 
     public function predefinedQuestionAnswerList(): JsonResponse
     {
-        $predefinedQAs = $this->questionAnswerService->getBy(criteria: ['is_active' => true], orderBy: ['created_at' => 'desc']);
+        $predefinedQAs = $this->questionAnswerService->getBy(
+            criteria: ['is_active' => true, 'question_answer_for' => DRIVER],
+            orderBy: ['created_at' => 'desc']
+        );
 
         return response()->json(responseFormatter(DEFAULT_200, $predefinedQAs), 200);
     }

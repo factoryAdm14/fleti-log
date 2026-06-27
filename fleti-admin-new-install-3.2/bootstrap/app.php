@@ -77,6 +77,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
 
             // Custom middlewares
             'admin'=>AdminMiddleware::class,
+            'finance.withdraw' => \Modules\FinanceManagement\Http\Middleware\EnsureFinanceWithdrawPermission::class,
             'maintenance_mode' => MaintenanceModeMiddleware::class,
         ]);
     })

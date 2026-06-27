@@ -106,11 +106,14 @@
     });
 
     $(document).ready(function (){
+        const picker = window.FletiDatePicker || {};
+        const labels = picker.getLabels ? picker.getLabels() : {};
+
         // --- Daterangepicker ---
         $(".js-daterangepicker").daterangepicker({
             timePicker: false,
             autoUpdateInput: false,
-            ranges: {
+            ranges: picker.getRanges ? picker.getRanges() : {
                 Today: [moment(), moment()],
                 Yesterday: [
                     moment().subtract(1, "days"),
@@ -128,19 +131,22 @@
                         .endOf("month")
                 ]
             },
+            locale: picker.getLocaleOptions ? picker.getLocaleOptions() : {},
             alwaysShowCalendars: true
         });
 
         $(".js-daterangepicker").on("apply.daterangepicker", function(
             ev,
-            picker
+            pickerInstance
         ) {
             $(this).removeAttr("readonly");
             $(this).removeClass("cursor-pointer");
             $(this).val(
-                picker.startDate.format("MM/DD/YYYY") +
-                " - " +
-                picker.endDate.format("MM/DD/YYYY")
+                picker.formatRange
+                    ? picker.formatRange(pickerInstance.startDate, pickerInstance.endDate)
+                    : pickerInstance.startDate.format("MM/DD/YYYY") +
+                    " - " +
+                    pickerInstance.endDate.format("MM/DD/YYYY")
             );
         });
 

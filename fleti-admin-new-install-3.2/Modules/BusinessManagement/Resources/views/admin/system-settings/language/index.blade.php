@@ -91,26 +91,23 @@
                                                    data-url="{{ route('admin.business.languages.update-status') }}"
                                                    data-code="{{ $data['code'] }}"
                                                    class="switcher_input language-status-change status_{{ $data['code'] }}"
-                                                {{ $data['status'] == 1 ? 'checked' : '' }}>
+                                                {{ $data['status'] == 1 ? 'checked' : '' }}
+                                                @if(!empty($data['default'])) disabled @endif>
                                             <span class="switcher_control"></span>
                                         </label>
                                     </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2 align-items-center">
-                                            <a class="btn btn-outline-primary btn-action d-flex"
+                                            <a class="btn btn-outline-primary btn-action d-flex justify-content-center align-items-center"
                                                href="{{ route('admin.business.languages.translate', [$data['code']]) }}">
-                                                <img
-                                                    src="{{ dynamicAsset('public/assets/admin-module/img/svg/translate.svg') }}"
-                                                    alt="" class="svg">
+                                                <i class="bi bi-translate"></i>
                                             </a>
                                             @if ($data['code'] != 'en')
                                                 <div class="dropdown d-flex justify-content-center">
-                                                    <button type="button" class="btn btn-outline-primary btn-action d-flex"
+                                                    <button type="button" class="btn btn-outline-primary btn-action d-flex justify-content-center align-items-center"
                                                             id="dropdownMenuButton" data-bs-toggle="dropdown"
                                                             aria-expanded="false">
-                                                        <img
-                                                            src="{{ dynamicAsset('public/assets/admin-module/img/svg/settings.svg') }}"
-                                                            alt="" class="svg">
+                                                        <i class="bi bi-gear-fill"></i>
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                         @if ($data['code'] != 'en')

@@ -89,7 +89,17 @@ class WalletRepository implements WalletRepositoryInterface{
   }
 
   @override
-  Future<Response?> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note) async {
+  Future<Response?> withdrawBalance(List <String> typeKey, List<String> typeValue,int id, String balance, String note, {String? methodInfoId}) async {
+
+      final amount = double.tryParse(balance.replaceAll(',', '.')) ?? 0;
+      if (methodInfoId != null && methodInfoId.isNotEmpty) {
+        return await apiClient.postData(AppConstants.financeWithdrawRequestUri, {
+          'amount': amount,
+          'withdraw_method': id,
+          'withdraw_method_info_id': methodInfoId,
+          if (note.isNotEmpty) 'note': note,
+        });
+      }
 
       Map<String, String> fields = {};
 
@@ -126,12 +136,12 @@ class WalletRepository implements WalletRepositoryInterface{
 
   @override
   Future<Response> getWithdrawPendingList(int offset) async{
-    return await apiClient.getData('${AppConstants.withdrawPendingListUri}$offset');
+    return await apiClient.getData('${AppConstants.financeWithdrawPendingUri}$offset');
   }
 
   @override
   Future<Response> getWithdrawSettledList(int offset) async{
-    return await apiClient.getData('${AppConstants.withdrawSettledListUri}$offset');
+    return await apiClient.getData('${AppConstants.financeWithdrawSettledUri}$offset');
   }
 
   @override
