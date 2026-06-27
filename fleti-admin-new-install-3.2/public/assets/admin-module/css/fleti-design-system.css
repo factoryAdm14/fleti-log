@@ -1,0 +1,252 @@
+/**
+ * Fleti Enterprise v4 — Design System (FASE 007)
+ * Visual-only layer. Load after custom.css.
+ */
+
+:root {
+  --fleti-radius-sm: 0.375rem;
+  --fleti-radius-md: 0.625rem;
+  --fleti-radius-lg: 0.875rem;
+  --fleti-space-xs: 0.375rem;
+  --fleti-space-sm: 0.625rem;
+  --fleti-space-md: 1rem;
+  --fleti-space-lg: 1.25rem;
+  --fleti-space-xl: 1.75rem;
+  --fleti-border: rgba(41, 50, 49, 0.12);
+  --fleti-surface: #ffffff;
+  --fleti-muted: #6b7a78;
+}
+
+.fleti-panel-card {
+  background: var(--fleti-surface);
+  border: 1px solid var(--fleti-border);
+  border-radius: var(--fleti-radius-lg);
+  padding: var(--fleti-space-lg);
+  box-shadow: none;
+}
+
+.fleti-panel-card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--title-color, #293231);
+  margin-bottom: var(--fleti-space-sm);
+}
+
+.fleti-panel-card__body {
+  color: var(--fleti-muted);
+  font-size: 0.875rem;
+}
+
+.fleti-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.125rem;
+  border-radius: var(--fleti-radius-md);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.fleti-btn--primary {
+  background: var(--bs-primary, #14b19e);
+  color: #fff;
+}
+
+.fleti-btn--primary:hover {
+  background: color-mix(in srgb, var(--bs-primary, #14b19e) 88%, #000);
+  color: #fff;
+}
+
+.fleti-btn--outline {
+  background: transparent;
+  border-color: var(--bs-primary, #14b19e);
+  color: var(--bs-primary, #14b19e);
+}
+
+.fleti-btn--ghost {
+  background: transparent;
+  color: var(--bs-primary, #14b19e);
+}
+
+.fleti-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--fleti-surface);
+  border: 1px solid var(--fleti-border);
+  border-radius: var(--fleti-radius-lg);
+  overflow: hidden;
+}
+
+.fleti-table thead th {
+  background: #f7fbfb;
+  color: var(--title-color, #293231);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--fleti-border);
+}
+
+.fleti-table tbody td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--fleti-border);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.fleti-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.fleti-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fleti-space-sm);
+  align-items: center;
+  padding: var(--fleti-space-md);
+  background: var(--fleti-surface);
+  border: 1px solid var(--fleti-border);
+  border-radius: var(--fleti-radius-lg);
+}
+
+.fleti-filter .form-control,
+.fleti-filter .form-select {
+  border-radius: var(--fleti-radius-md);
+  border-color: var(--fleti-border);
+  min-height: 2.5rem;
+}
+
+.fleti-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.625rem;
+  border-radius: var(--fleti-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.fleti-status-badge--success {
+  background: rgba(48, 184, 119, 0.12);
+  color: #30b877;
+}
+
+.fleti-status-badge--warning {
+  background: #fff4e5;
+  color: #e67e22;
+}
+
+.fleti-status-badge--danger {
+  background: rgba(255, 109, 109, 0.12);
+  color: #ff6d6d;
+}
+
+.fleti-status-badge--info {
+  background: rgba(1, 119, 205, 0.12);
+  color: #0177cd;
+}
+
+.fleti-status-badge--neutral {
+  background: rgba(41, 50, 49, 0.08);
+  color: var(--fleti-muted);
+}
+
+.fleti-metric-card {
+  background: var(--fleti-surface);
+  border: 1px solid var(--fleti-border);
+  border-radius: var(--fleti-radius-lg);
+  padding: var(--fleti-space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--fleti-space-md);
+  box-shadow: none;
+}
+
+.fleti-metric-card__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--fleti-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 177, 158, 0.12);
+  color: var(--bs-primary, #14b19e);
+  font-size: 1.125rem;
+}
+
+.fleti-metric-card__label {
+  font-size: 0.8125rem;
+  color: var(--fleti-muted);
+  margin-bottom: 0.125rem;
+}
+
+.fleti-metric-card__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--title-color, #293231);
+  line-height: 1.2;
+}
+
+.fleti-chart-card {
+  background: var(--fleti-surface);
+  border: 1px solid var(--fleti-border);
+  border-radius: var(--fleti-radius-lg);
+  padding: var(--fleti-space-lg);
+  box-shadow: none;
+}
+
+.fleti-chart-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fleti-space-sm);
+  margin-bottom: var(--fleti-space-md);
+}
+
+.fleti-chart-card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--title-color, #293231);
+  margin: 0;
+}
+
+.fleti-chart-card__body {
+  min-height: 12rem;
+}
+
+@media (max-width: 767.98px) {
+  .fleti-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fleti-metric-card {
+    padding: var(--fleti-space-md);
+  }
+}
+
+[theme="dark"] {
+  --fleti-border: rgba(255, 255, 255, 0.1);
+  --fleti-surface: #232325;
+  --fleti-muted: #969697;
+}
+
+[theme="dark"] .fleti-table thead th {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[theme="dark"] .fleti-status-badge--warning {
+  background: rgba(230, 126, 34, 0.15);
+  color: #f0a060;
+}
+
+[theme="dark"] .fleti-status-badge--neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fleti-muted);
+}

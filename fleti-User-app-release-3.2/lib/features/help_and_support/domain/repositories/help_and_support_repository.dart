@@ -1,0 +1,77 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:ride_sharing_user_app/data/api_client.dart';
+import 'package:ride_sharing_user_app/features/help_and_support/domain/repositories/help_and_support_repository_interface.dart';
+import 'package:ride_sharing_user_app/util/app_constants.dart';
+
+class HelpAndSupportRepository implements HelpAndSupportRepositoryInterface {
+  final ApiClient apiClient;
+  const HelpAndSupportRepository({required this.apiClient});
+
+  @override
+  Future<Response> createChannel() async {
+    return await apiClient.postData(AppConstants.createChannelWithAdmin, {"_method": "put"});
+  }
+
+  @override
+  Future<Response> sendMessage({
+    String? message,
+    String? channelId,
+    List<MultipartBody>? images,
+    PlatformFile? platformFile,
+  }) async {
+    return await apiClient.postMultipartDataConversation(
+      AppConstants.sendMessageToAdmin,
+      {
+        "message": message ?? '',
+        "channel_id": channelId ?? '',
+        "_method": "put",
+      },
+      images ?? [],
+      otherFile: platformFile,
+    );
+  }
+
+  @override
+  Future<Response> sendFaqMessage({String? questionId, String? channelId}) async {
+    return await apiClient.postData(AppConstants.sendFaqMessageToAdmin, {
+      "channel_id": channelId ?? '',
+      "question_id": questionId ?? '',
+      "_method": "put",
+    });
+  }
+
+  @override
+  Future<Response> getConversation(String channelId, int offset) async {
+    return await apiClient.getData('${AppConstants.conversationList}?channel_id=$channelId&limit=10&offset=$offset');
+  }
+
+  @override
+  Future<Response> getPredefineFaqList() async {
+    return await apiClient.getData(AppConstants.predefineFawQuestionList);
+  }
+
+  @override
+  Future<Response> submitServiceRequest({required String channelId, required Map<String, dynamic> body}) async {
+    return await apiClient.postData(AppConstants.submitServiceRequestToAdmin, {
+      ...body,
+      'channel_id': channelId,
+      '_method': 'put',
+    });
+  }
+
+  @override
+  Future add(value) => throw UnimplementedError();
+
+  @override
+  Future delete(String id) => throw UnimplementedError();
+
+  @override
+  Future get(String id) => throw UnimplementedError();
+
+  @override
+  Future getList({int? offset = 1}) => throw UnimplementedError();
+
+  @override
+  Future update(value, {int? id}) => throw UnimplementedError();
+}

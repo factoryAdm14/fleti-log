@@ -1,0 +1,571 @@
+/**
+ * Fleti — Landing page redesign
+ */
+
+:root {
+  --fleti-primary: #14b19e;
+  --fleti-primary-dark: #119a89;
+  --fleti-text: #293231;
+  --fleti-muted: #6b7a78;
+  --fleti-border: rgba(41, 50, 49, 0.1);
+  --fleti-surface: #ffffff;
+  --fleti-bg: #f4f9f8;
+  --fleti-footer-bg: #1c2423;
+}
+
+body.fleti-landing-page {
+  background: var(--fleti-bg);
+  color: var(--fleti-text);
+}
+
+body.fleti-landing-page .preloader {
+  display: none !important;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
+body.fleti-landing-page .fleti-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--fleti-border);
+}
+
+body.fleti-landing-page .fleti-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4rem;
+}
+
+body.fleti-landing-page .fleti-header__logo img {
+  max-height: 40px;
+  width: auto;
+}
+
+body.fleti-landing-page .fleti-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.fleti-landing-page .fleti-header__nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  color: var(--fleti-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+
+body.fleti-landing-page .fleti-header__nav a:hover,
+body.fleti-landing-page .fleti-header__nav a.active {
+  color: var(--fleti-primary);
+  background: rgba(20, 177, 158, 0.08);
+}
+
+body.fleti-landing-page .fleti-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 1.125rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+body.fleti-landing-page .fleti-btn--primary {
+  background: var(--fleti-primary);
+  color: #fff;
+}
+
+body.fleti-landing-page .fleti-btn--primary:hover {
+  background: var(--fleti-primary-dark);
+  color: #fff;
+}
+
+body.fleti-landing-page .fleti-header__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+}
+
+body.fleti-landing-page .fleti-header__toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--fleti-text);
+  border-radius: 2px;
+}
+
+@media (min-width: 992px) {
+  body.fleti-landing-page .fleti-header__menu {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 991.98px) {
+  body.fleti-landing-page .fleti-header__toggle {
+    display: flex;
+  }
+
+  body.fleti-landing-page .fleti-header__menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--fleti-border);
+    padding: 1rem;
+    box-shadow: 0 12px 30px rgba(41, 50, 49, 0.08);
+  }
+
+  body.fleti-landing-page .fleti-header__menu.is-open {
+    display: block;
+  }
+
+  body.fleti-landing-page .fleti-header__nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.fleti-landing-page .fleti-header__nav a {
+    padding: 0.75rem 1rem;
+  }
+
+  body.fleti-landing-page .fleti-header__cta {
+    margin-top: 0.75rem;
+    width: 100%;
+  }
+}
+
+/* ── Hero & sections ────────────────────────────────── */
+
+body.fleti-landing-page .banner-section {
+  padding: 2rem 0 1rem;
+}
+
+body.fleti-landing-page .banner-wrapper {
+  min-height: auto !important;
+  padding: 3rem 2.5rem !important;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(20, 177, 158, 0.1);
+}
+
+body.fleti-landing-page .banner-content .title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem) !important;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+body.fleti-landing-page .banner-content .txt {
+  font-size: 1.0625rem !important;
+  line-height: 1.65;
+  max-width: 34rem;
+}
+
+body.fleti-landing-page .cmn--btn {
+  border-radius: 0.625rem !important;
+  font-weight: 600 !important;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem !important;
+}
+
+body.fleti-landing-page .section-title {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+/* Estatísticas: sem contorno, layout limpo */
+body.fleti-landing-page .basic-info-section {
+  padding: 0.5rem 0 1rem;
+}
+
+body.fleti-landing-page .basic-info-wrapper {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 1.25rem 0 !important;
+  gap: 2rem !important;
+  border-radius: 0;
+}
+
+body.fleti-landing-page .basic-info-item {
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  gap: 1rem !important;
+}
+
+body.fleti-landing-page .basic-info-wrapper .basic-info-item::before {
+  display: none !important;
+}
+
+body.fleti-landing-page .basic-info-wrapper .basic-info-item img {
+  width: 3.25rem;
+  height: 3.25rem;
+  max-width: none;
+  padding: 0.7rem;
+  border-radius: 0.875rem;
+  background: rgba(20, 177, 158, 0.08);
+  object-fit: contain;
+  flex-shrink: 0;
+  border: none;
+  box-shadow: none;
+}
+
+body.fleti-landing-page .basic-info-wrapper .basic-info-item .content h2 {
+  color: var(--fleti-primary) !important;
+  margin-bottom: 0.35rem !important;
+  font-size: 1.375rem !important;
+}
+
+body.fleti-landing-page .basic-info-wrapper .basic-info-item .content p {
+  color: var(--fleti-muted);
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 991px) {
+  body.fleti-landing-page .basic-info-wrapper {
+    gap: 1.5rem !important;
+    padding: 1rem 0 !important;
+  }
+
+  body.fleti-landing-page .basic-info-wrapper .basic-info-item {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 575px) {
+  body.fleti-landing-page .basic-info-wrapper .basic-info-item img {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.55rem;
+  }
+}
+
+body.fleti-landing-page .ourSolution__item {
+  border: none !important;
+  border-radius: 1.25rem;
+}
+
+body.fleti-landing-page .testimonial__item {
+  border: none !important;
+  background: transparent !important;
+}
+
+body.fleti-landing-page .testimonial-slider .owl-item.active.center .testimonial__item {
+  border-radius: 1.25rem;
+  outline: 1px solid rgba(20, 177, 158, 0.2);
+}
+
+body.fleti-landing-page .bg--base {
+  background-color: var(--fleti-primary) !important;
+}
+
+body.fleti-landing-page .text--base {
+  color: var(--fleti-primary) !important;
+}
+
+body.fleti-landing-page .platform-section .shape {
+  opacity: 0.35;
+}
+
+body.fleti-landing-page .mt-sm-60,
+body.fleti-landing-page .py-sm-60 {
+  margin-top: 3rem !important;
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+/* ── Newsletter ─────────────────────────────────────── */
+
+body.fleti-landing-page .fleti-newsletter {
+  margin: 3rem 0 0;
+}
+
+body.fleti-landing-page .fleti-newsletter__card {
+  background: linear-gradient(135deg, #14b19e 0%, #0e9a8a 100%);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  color: #fff;
+}
+
+body.fleti-landing-page .fleti-newsletter__card h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+body.fleti-landing-page .fleti-newsletter__card p {
+  opacity: 0.9;
+  margin: 0;
+}
+
+body.fleti-landing-page .fleti-newsletter__form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+body.fleti-landing-page .fleti-newsletter__form input {
+  flex: 1;
+  min-height: 2.75rem;
+  border: none;
+  border-radius: 0.625rem;
+  padding: 0 1rem;
+}
+
+body.fleti-landing-page .fleti-newsletter__form button {
+  min-height: 2.75rem;
+  border: none;
+  border-radius: 0.625rem;
+  padding: 0 1.25rem;
+  background: #fff;
+  color: var(--fleti-primary);
+  font-weight: 600;
+}
+
+@media (min-width: 992px) {
+  body.fleti-landing-page .fleti-newsletter__form {
+    margin-top: 0;
+  }
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+
+body.fleti-landing-page footer,
+body.fleti-landing-page .fleti-footer {
+  margin-top: 0;
+  background: var(--fleti-footer-bg);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+body.fleti-landing-page .footer-top,
+body.fleti-landing-page .footer-bottom {
+  display: none !important;
+}
+
+body.fleti-landing-page .fleti-footer {
+  padding: 3rem 0 0;
+}
+
+body.fleti-landing-page .fleti-footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.fleti-landing-page .fleti-footer__brand img {
+  max-height: 44px;
+  width: auto;
+  margin-bottom: 1rem;
+}
+
+body.fleti-landing-page .fleti-footer__brand p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  max-width: 22rem;
+}
+
+body.fleti-landing-page .fleti-footer__social {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.fleti-landing-page .fleti-footer__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+body.fleti-landing-page .fleti-footer__social a:hover {
+  background: var(--fleti-primary);
+  color: #fff;
+}
+
+body.fleti-landing-page .fleti-footer__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 1rem;
+}
+
+body.fleti-landing-page .fleti-footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+body.fleti-landing-page .fleti-footer__links li + li {
+  margin-top: 0.625rem;
+}
+
+body.fleti-landing-page .fleti-footer__links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  transition: color 0.15s;
+}
+
+body.fleti-landing-page .fleti-footer__links a:hover {
+  color: var(--fleti-primary);
+}
+
+body.fleti-landing-page .fleti-footer__contact-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+body.fleti-landing-page .fleti-footer__contact-item i {
+  color: var(--fleti-primary);
+  font-size: 1.125rem;
+  margin-top: 0.1rem;
+}
+
+body.fleti-landing-page .fleti-footer__contact-item a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+
+body.fleti-landing-page .fleti-footer__contact-item a:hover {
+  color: var(--fleti-primary);
+}
+
+body.fleti-landing-page .fleti-footer__apps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+body.fleti-landing-page .fleti-footer__apps img {
+  height: 40px;
+  width: auto;
+  border-radius: 0.5rem;
+}
+
+body.fleti-landing-page .fleti-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 991.98px) {
+  body.fleti-landing-page .fleti-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  body.fleti-landing-page .fleti-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  body.fleti-landing-page .banner-wrapper {
+    padding: 2rem 1.5rem !important;
+  }
+
+  body.fleti-landing-page .fleti-newsletter__form {
+    flex-direction: column;
+  }
+}
+
+body.fleti-landing-page .fleti-legal-page-card {
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+body.fleti-landing-page .fleti-legal-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 1.75rem 0 0.75rem;
+}
+
+body.fleti-landing-page .fleti-legal-content h2:first-child {
+  margin-top: 0;
+}
+
+body.fleti-landing-page .fleti-legal-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 1.25rem 0 0.5rem;
+}
+
+body.fleti-landing-page .fleti-legal-content p,
+body.fleti-landing-page .fleti-legal-content li {
+  color: #475569;
+  line-height: 1.7;
+  font-size: 0.9375rem;
+}
+
+body.fleti-landing-page .fleti-legal-content ul,
+body.fleti-landing-page .fleti-legal-content ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+body.fleti-landing-page .fleti-legal-meta {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e8edf3;
+  font-size: 0.8125rem;
+  color: #64748b;
+}

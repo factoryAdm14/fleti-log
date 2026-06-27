@@ -1,0 +1,16 @@
+{
+    "name": "nwidart/financemanagement",
+    "description": "Fleti finance module",
+    "authors": [],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\FinanceManagement\\": ""
+        }
+    }
+}

@@ -1,0 +1,32 @@
+Backend API routes: 214
+
+=== USER MISSING ===
+getRecentAddressList: api/customer/recent-address
+
+=== DRIVER MISSING ===
+vehicleModelList: api/driver/vehicle/models/list
+
+=== USER PARTIAL ===
+tripDetails: api/customer/ride/details -> api/customer/ride/details/{id}
+biddingList: api/customer/ride/bidding-list -> api/customer/ride/bidding-list/{id}
+updateTripStatus: api/customer/ride/update-status -> api/customer/ride/update-status/{id}
+parcelReceived: api/customer/ride/received-returning-parcel -> api/customer/ride/received-returning-parcel/{id}
+resendSafetyAlert: api/customer/safety-alert/resend -> api/customer/safety-alert/resend/{id}
+markAsSolvedSafetyAlert: api/customer/safety-alert/mark-as-solved -> api/customer/safety-alert/mark-as-solved/{id}
+customerAlertDetails: api/customer/safety-alert/show -> api/customer/safety-alert/show/{id}
+undoSafetyAlert: api/customer/safety-alert/undo -> api/customer/safety-alert/undo/{id}
+updateScheduleTrip: api/customer/ride/edit-scheduled-trip -> api/customer/ride/edit-scheduled-trip/{id}
+rideTrackingUrl: api/track -> api/track/{id}/data
+
+=== DRIVER PARTIAL ===
+tripDetails: api/driver/ride/details -> api/driver/ride/details/{id}
+saveReview: api/driver/review/save -> api/driver/review/save/{id}
+withdrawMethodUpdate: api/driver/withdraw-method-info/update -> api/driver/withdraw-method-info/update/{id}
+withdrawMethodDelete: api/driver/withdraw-method-info/delete -> api/driver/withdraw-method-info/delete/{id}
+updateVehicle: api/driver/vehicle/update -> api/driver/vehicle/update/{id}
+resendSafetyAlert: api/driver/safety-alert/resend -> api/driver/safety-alert/resend/{id}
+markAsSolvedSafetyAlert: api/driver/safety-alert/mark-as-solved -> api/driver/safety-alert/mark-as-solved/{id}
+customerAlertDetails: api/driver/safety-alert/show -> api/driver/safety-alert/show/{id}
+undoSafetyAlert: api/driver/safety-alert/undo -> api/driver/safety-alert/undo/{id}
+outForPickupUri: api/driver/ride/update-to-out-for-pickup -> api/driver/ride/update-to-out-for-pickup/{id}
+rideTrackingUrl: api/track -> api/track/{id}/data
